@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blockchain Visualizer</title>
+    <link rel="stylesheet" href="static/css/index.css" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap"
+    />
+
+    <style></style>
+  </head>
+  <body>
+    <div class="video-container">
+      <video autoplay muted loop class="video-background">
+        <source src="../assets/bg.mp4" type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
+      <div class="overlay"></div>
+    </div>
+    <div class="content">
+      <div class="container">
+        <h1>Blockchain Visualizer</h1>
+        <div class="buttons">
+          <button
+            class="button"
+            onclick="window.location.href='http://localhost:8080/login'"
+          >
+            Add Transaction
+          </button>
+          <button
+            class="button"
+            onclick="window.location.href='http://localhost:8080/miner'"
+          >
+            Login as Miner
+          </button>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

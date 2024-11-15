@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login</title>
+    <link rel="stylesheet" href="static/css/style.css" />
+  </head>
+  <body>
+    <div class="login-container">
+      <h2>Login</h2>
+      <!-- Assign id="loginForm" and remove action and method -->
+      <form id="loginForm">
+        <div>
+          <label for="username">Username:</label>
+          <input type="text" id="username" name="username" required />
+        </div>
+        <div>
+          <label for="password">Password:</label>
+          <input type="password" id="password" name="password" required />
+        </div>
+        <div>
+          <label for="role">Select Role:</label>
+          <select id="role" name="role" required>
+            <option value="standarduser">StandardUser</option>
+            <option value="customuser">CustomUser</option>
+            <option value="miner">Miner</option>
+          </select>
+        </div>
+        <input type="submit" value="Login" />
+      </form>
+
+      <!-- JavaScript to handle form submission -->
+      <script>
+        document
+          .getElementById("loginForm")
+          .addEventListener("submit", async (event) => {
+            event.preventDefault();
+            const data = {
+              username: event.target.username.value,
+              password: event.target.password.value,
+              role: event.target.role.value,
+            };
+
+            try {
+              const response = await fetch("/login", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(data),
+              });
+
+              const result = await response.text();
+              alert(result);
+            } catch (error) {
+              alert("An error occurred: " + error.message);
+            }
+          });
+      </script>
+    </div>
+  </body>
+</html>
