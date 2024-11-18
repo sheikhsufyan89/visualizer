@@ -3,15 +3,18 @@
 
 #include "User.h"
 
+using namespace std;
 class StandardUser : public User {
 private:
 
 public:
+
+    StandardUser() : User("", "", "standard") {}
    
-    StandardUser(const std::string& username, const std::string& password)
+    StandardUser(const string& username, const string& password)
         : User(username, password, "standard") {}
 
-    unsigned int hashTransaction(const std::string& transactionData, time_t transactionTime) const;
+    unsigned int hashTransaction(const string& transactionData, time_t transactionTime) const;
 
     void display() const;
 };

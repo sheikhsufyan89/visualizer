@@ -4,12 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Login</title>
-    <link rel="stylesheet" href="static/css/style.css" />
+    <link rel="stylesheet" href="static/css/login.css" />
   </head>
   <body>
     <div class="login-container">
       <h2>Login</h2>
-      <!-- Assign id="loginForm" and remove action and method -->
       <form id="loginForm">
         <div>
           <label for="username">Username:</label>
@@ -22,16 +21,23 @@
         <div>
           <label for="role">Select Role:</label>
           <select id="role" name="role" required>
-            <option value="standarduser">StandardUser</option>
-            <option value="customuser">CustomUser</option>
+            <option value="standard">StandardUser</option>
+            <option value="custom">CustomUser</option>
             <option value="miner">Miner</option>
           </select>
         </div>
         <input type="submit" value="Login" />
       </form>
 
-      <!-- JavaScript to handle form submission -->
       <script>
+        // function playSound() {
+        //   const audio = new Audio("../assets/sound.mp3"); // Adjust the path to your sound file
+        //   audio.loop = true; // Ensure the sound plays in a loop
+        //   audio.play().catch((error) => {
+        //     console.error("Sound autoplay blocked by browser:", error);
+        //   }); // Catch any autoplay restrictions
+        // }
+        // playSound();
         document
           .getElementById("loginForm")
           .addEventListener("submit", async (event) => {
@@ -51,8 +57,17 @@
                 body: JSON.stringify(data),
               });
 
-              const result = await response.text();
-              alert(result);
+              if (response.status === 200) {
+                const result = await response.json();
+
+                console.log(result);
+
+                // Redirect to the provided URL
+                window.location.href = result.redirect_url;
+              } else {
+                const result = await response.text();
+                alert(result); // Show the error message returned by the server
+              }
             } catch (error) {
               alert("An error occurred: " + error.message);
             }

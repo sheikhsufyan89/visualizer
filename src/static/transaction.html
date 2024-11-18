@@ -8,8 +8,190 @@
   </head>
   <body>
     <div class="container">
-      <div class="dashboard">dashboard</div>
-      <div class="visualizer">visualizer</div>
+      <div class="dashboard">
+        <div>
+          <span id="username-display"></span><span id="role-display"></span>
+        </div>
+        <div class="navbar">
+          <a href="#" id="nav-transaction-form" class="active"
+            >Transaction Form</a
+          >
+          <a href="#" id="nav-pending-transactions">Pending Transactions</a>
+          <a href="#" id="nav-signed-transactions">Signed Transactions</a>
+        </div>
+
+        <div class="content">
+          <div id="transaction-form-section" class="active">
+            <h2>Transaction Form</h2>
+            <form id="transaction-form">
+              <label for="recipient">Recipient:</label>
+              <input
+                type="text"
+                id="recipient"
+                name="recipient"
+                placeholder="Enter recipient name"
+                required
+              />
+
+              <label for="amount">Amount:</label>
+              <input
+                type="number"
+                id="amount"
+                name="amount"
+                placeholder="Enter amount"
+                required
+              />
+
+              <button type="submit">Submit Transaction</button>
+            </form>
+          </div>
+
+          <div id="pending-transactions-section">
+            <h2>Pending Transactions</h2>
+            <ul id="pending-transactions-list"></ul>
+          </div>
+          <div id="signed-transactions-section">
+            <h2>Signed Transactions</h2>
+            <ul id="signed-transactions-list"></ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="visualizer"></div>
     </div>
+
+    <script>
+      // function playSound() {
+      //   const audio = new Audio("../assets/sound.mp3"); // Adjust the path to your sound file
+      //   audio.loop = true; // Ensure the sound plays in a loop
+      //   audio.play().catch((error) => {
+      //     console.error("Sound autoplay blocked by browser:", error);
+      //   }); // Catch any autoplay restrictions
+      // }
+      // playSound();
+      document.addEventListener("DOMContentLoaded", async () => {
+        const navTransactionForm = document.getElementById(
+          "nav-transaction-form"
+        );
+        const navPendingTransactions = document.getElementById(
+          "nav-pending-transactions"
+        );
+        const navSignedTransactions = document.getElementById(
+          "nav-signed-transactions"
+        );
+
+        const transactionFormSection = document.getElementById(
+          "transaction-form-section"
+        );
+        const pendingTransactionsSection = document.getElementById(
+          "pending-transactions-section"
+        );
+        const signedTransactionsSection = document.getElementById(
+          "signed-transactions-section"
+        );
+
+        const navbarLinks = [
+          navTransactionForm,
+          navPendingTransactions,
+          navSignedTransactions,
+        ];
+        const sections = [
+          transactionFormSection,
+          pendingTransactionsSection,
+          signedTransactionsSection,
+        ];
+
+        function showSection(section, activeNav) {
+          sections.forEach((sec) => sec.classList.remove("active"));
+          navbarLinks.forEach((link) => link.classList.remove("active"));
+
+          section.classList.add("active");
+          activeNav.classList.add("active");
+        }
+
+        // Add event listeners to navbar links
+        navTransactionForm.addEventListener("click", (e) => {
+          e.preventDefault();
+          showSection(transactionFormSection, navTransactionForm);
+        });
+
+        navPendingTransactions.addEventListener("click", (e) => {
+          e.preventDefault();
+          showSection(pendingTransactionsSection, navPendingTransactions);
+        });
+
+        navSignedTransactions.addEventListener("click", (e) => {
+          e.preventDefault();
+          showSection(signedTransactionsSection, navSignedTransactions);
+        });
+
+        let currentUser = null;
+
+        try {
+          const response = await fetch("http://localhost:8080/currentUser");
+          if (response.status === 200) {
+            const result = await response.json();
+            document.getElementById("username-display").textContent =
+              result.username;
+            currentUser = result;
+            document.getElementById("role-display").textContent = result.role;
+          } else {
+            alert("User is not logged in.");
+          }
+        } catch (error) {
+          alert("An error occurred: " + error.message);
+        }
+
+        // const transactionForm = document.getElementById("transaction-form");
+        // transactionForm.addEventListener("submit", async (e) => {
+        //   e.preventDefault();
+
+        //   const recipient = document.getElementById("recipient").value;
+        //   const amount = document.getElementById("amount").value;
+
+        //   const transactionData = {
+        //     sender: currentUser.username,
+        //     recipient: recipient,
+        //     amount: parseFloat(amount),
+        //   };
+        document
+          .getElementById("transaction-form")
+          .addEventListener("submit", async (event) => {
+            event.preventDefault();
+            const data = {
+              sender: currentUser.username,
+              recipient: event.target.recipient.value,
+              amount: parseFloat(event.target.amount.value),
+            };
+
+            try {
+              const response = await fetch(
+                "http://localhost:8080/addTransaction",
+                {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify(data),
+                }
+              );
+
+              if (response.status === 200) {
+                const result = await response.json();
+                // Assuming the backend returns a message or transactionId
+                alert(
+                  "Transaction added successfully! Transaction ID: " +
+                    result.transactionId
+                );
+              } else {
+                const error = await response.json();
+                alert("Error: " + error.message); // Handle error response
+              }
+            } catch (error) {
+              alert("An error occurred: " + error.message); // Handle network/other errors
+            }
+          });
+      });
+    </script>
   </body>
 </html>

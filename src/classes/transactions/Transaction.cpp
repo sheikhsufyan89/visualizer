@@ -27,3 +27,13 @@ void Transaction::display() const {
     cout << "  Amount: " << amount << endl;
     cout << "  Timestamp: " << ctime(&timestamp);  
 }
+
+string Transaction::getsender() const {
+    return sender;
+}
+string Transaction::getReceiver() const {
+    return receiver;
+}
+// double Transaction::getAmount() const {
+//     return amount;
+// }

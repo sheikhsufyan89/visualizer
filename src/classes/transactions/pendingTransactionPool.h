@@ -3,21 +3,20 @@
 
 #include <string>
 #include <iostream>
-#include "../entity.h" 
-#include "transaction.h"
+#include "../entity.h"
 
+class Transaction;
 
 using namespace std;
 
 class PendingTransactionPool : public Entity {
 private:
     Transaction* pendingTransactions[100];
-    int pendingCount; // tracks current number of pending transactions in the pool.
-    static PendingTransactionPool* instance; // ensures there is only one instance of this class.
+    int pendingCount; 
+    static PendingTransactionPool* instance; 
     PendingTransactionPool(const string& id) : Entity(id), pendingCount(0) {}
 
 public:
-    // Get the singleton instance
     static PendingTransactionPool* getInstance(const string& id = "default_pool_id") {
         if (!instance) {
             instance = new PendingTransactionPool(id);
@@ -26,11 +25,16 @@ public:
     }
 
     bool addTransaction(Transaction* tx);
-    bool removeTransaction(const std::string& transactionId);
-
-    // Optional method to simulate processing a transaction (moving to blockchain)
-    void processTransaction(const std::string& transactionId);
+    bool removeTransaction(const string& transactionId);
+    void processTransaction(const string& transactionId);
+    int getPendingCount();
+    Transaction* getTransactionAt(int index) const {
+        if (index >= 0 && index < pendingCount) {
+            return pendingTransactions[index];
+        }
+        return nullptr;
+    }
     void display() const override;
 };
 
-#endif
+#endif 

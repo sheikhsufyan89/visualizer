@@ -1,16 +1,22 @@
-// #ifndef STANDARD_USER_H
-// #define STANDARD_USER_H
+#ifndef CUSTOMUSER_H
+#define CUSTOMUSER_H
 
-// #include "user.h"
-// #include <string>
+#include "User.h"
 
-// using namespace std;
+using namespace std;
+class CustomUser : public User {
+private:
 
-// class customUser : public User {
-// public:
-//     customUser(const string& username, const string& password);
+public:
 
-//     void display() const override;
-// };
+    CustomUser() : User("", "", "custom") {}
+   
+    CustomUser(const string& username, const string& password)
+        : User(username, password, "custom") {}
 
-// #endif
+    // unsigned int hashTransaction(const string& transactionData, time_t transactionTime) const;
+
+    void display() const;
+};
+
+#endif

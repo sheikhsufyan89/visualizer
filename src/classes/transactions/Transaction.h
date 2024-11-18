@@ -20,10 +20,14 @@ public:
    
     Transaction(const string& sender, const string& receiver, double amount);
     void display() const override;
+    
     ~Transaction() {}
 
     // Static method to get the next transaction ID
     static string generateTransactionId();
+    string getsender() const;
+    string getReceiver() const;
+    // double amount();
 };
 
 // #endif 

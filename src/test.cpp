@@ -9,12 +9,12 @@
 
 using namespace std;
 
-unsigned int simpleHash(const std::string& input, time_t transactionTime) {
+unsigned int simpleHash(const string& input, time_t transactionTime) {
     unsigned int hash = 0;
 
     // Convert the transaction time to string
-    std::string timeStr = std::to_string(transactionTime);
-    std::string data = input + timeStr; // Combine the input with the transaction time
+    string timeStr = to_string(transactionTime);
+    string data = input + timeStr; // Combine the input with the transaction time
 
     // Iterate over each character of the combined data (input + time)
     for (char ch : data) {
@@ -57,6 +57,7 @@ unsigned int simpleHash(const std::string& input, time_t transactionTime) {
 //}
 
 int main(){
+    string* users = {};
     StandardUser user1("alice", "password123");
     StandardUser user2("bob", "bobpassword");
     Transaction x1("bob", "sufyan", 100);
@@ -68,6 +69,5 @@ int main(){
     // user1.display();
     // cout << endl;
     // cout << user1.getUsername();
-    cout << User::getUser(0);
     return 0;    
 }
