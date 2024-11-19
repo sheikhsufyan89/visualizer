@@ -14,7 +14,7 @@ public:
     CustomUser(const string& username, const string& password)
         : User(username, password, "custom") {}
 
-    // unsigned int hashTransaction(const string& transactionData, time_t transactionTime) const;
+    unsigned int hashTransaction(const string& transactionData, time_t transactionTime) const;
 
     void display() const;
 };

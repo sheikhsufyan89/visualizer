@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blockchain Visualizer</title>
+    <style>
+      body {
+        font-family: "Courier New", Courier, monospace;
+        background-color: #121212;
+        color: #f0f0f0;
+        margin: 0;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        overflow: hidden;
+      }
+      h1 {
+        font-size: 2.5rem;
+        color: #00ffcc;
+        margin-bottom: 20px;
+        text-shadow: 0 0 10px #00ffcc;
+      }
+      .blockchain {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        max-width: 90%;
+        height: 70%;
+        overflow-y: scroll;
+        padding: 20px;
+        border: 2px solid #00ffcc;
+        border-radius: 10px;
+        box-shadow: 0 0 15px #00ffcc;
+      }
+      .block {
+        background: linear-gradient(135deg, #1f1f1f, #2a2a2a);
+        border: 2px solid #00ffcc;
+        border-radius: 15px;
+        padding: 20px;
+        width: 240px;
+        box-shadow: 0 0 15px #00ffcc;
+        position: relative;
+        transition: transform 0.3s, box-shadow 0.3s;
+      }
+      .block:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 0 25px #00ffcc, 0 0 15px #00ffcc inset;
+      }
+      .block h3 {
+        font-size: 20px;
+        margin: 0;
+        color: #00ffcc;
+      }
+      .block p {
+        margin: 10px 0;
+        font-size: 14px;
+        color: #ccc;
+      }
+      .arrow {
+        font-size: 48px;
+        color: #00ffcc;
+        text-shadow: 0 0 15px #00ffcc;
+        margin: auto;
+      }
+      .arrow.reverse {
+        transform: rotate(180deg);
+      }
+      .row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+      }
+      .row.reverse {
+        flex-direction: row-reverse;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Blockchain Visualizer</h1>
+    <div class="blockchain" id="blockchain-container"></div>
+
+    <script>
+      // Reference to the container
+      const container = document.getElementById("blockchain-container");
+
+      // Generate 30 blocks
+      const blocks = Array.from({ length: 30 }, (_, i) => ({
+        blockNumber: i + 1,
+        hash: `hash${i + 1}`,
+        previousHash: i === 0 ? "000000" : `hash${i}`,
+      }));
+
+      // Function to render the blockchain
+      function renderBlockchain(blocks) {
+        let currentRow = null;
+        blocks.forEach((block, index) => {
+          // Create a new row every 5 blocks
+          if (index % 5 === 0) {
+            currentRow = document.createElement("div");
+            currentRow.classList.add("row");
+            if (Math.floor(index / 5) % 2 !== 0) {
+              currentRow.classList.add("reverse");
+            }
+            container.appendChild(currentRow);
+          }
+
+          // Create block element
+          const blockElement = document.createElement("div");
+          blockElement.classList.add("block");
+          blockElement.innerHTML = `
+            <h3>Block ${block.blockNumber}</h3>
+            <p>Hash: ${block.hash}</p>
+            <p>Previous: ${block.previousHash}</p>
+          `;
+          currentRow.appendChild(blockElement);
+
+          // Add arrow unless it's the last block in the row
+          if ((index + 1) % 5 !== 0 && index !== blocks.length - 1) {
+            const arrowElement = document.createElement("div");
+            arrowElement.classList.add("arrow");
+            if (Math.floor(index / 5) % 2 !== 0) {
+              arrowElement.classList.add("reverse");
+            }
+            arrowElement.textContent = "⟶";
+            currentRow.appendChild(arrowElement);
+          }
+        });
+      }
+
+      // Render blocks
+      renderBlockchain(blocks);
+    </script>
+  </body>
+</html>

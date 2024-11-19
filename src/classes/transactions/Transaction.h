@@ -1,5 +1,5 @@
-// #ifndef TRANSACTION_H
-// #define TRANSACTION_H
+#ifndef TRANSACTION_H
+#define TRANSACTION_H
 
 #include <string>
 #include <ctime>
@@ -18,16 +18,18 @@ private:
 
 public:
    
-    Transaction(const string& sender, const string& receiver, double amount);
-    void display() const override;
+Transaction(const string& sender, const string& receiver, double amount);
+void display() const override;
     
-    ~Transaction() {}
+Transaction(const string& sender, const string& receiver, double amount, const string& id);
+    
 
-    // Static method to get the next transaction ID
+    ~Transaction() {}
     static string generateTransactionId();
-    string getsender() const;
+    string getSender() const;
     string getReceiver() const;
-    // double amount();
+    double getAmount() const;
+    time_t getTimeStamp() const;
 };
 
-// #endif 
+#endif 

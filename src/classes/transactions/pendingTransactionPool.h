@@ -4,8 +4,7 @@
 #include <string>
 #include <iostream>
 #include "../entity.h"
-
-class Transaction;
+#include "Transaction.h"
 
 using namespace std;
 
@@ -35,6 +34,14 @@ public:
         return nullptr;
     }
     void display() const override;
+    time_t getTransactionTimestamp(const string& transactionId) const {
+    for (int i = 0; i < pendingCount; ++i) {
+        if (pendingTransactions[i]->getId() == transactionId) {
+            return pendingTransactions[i]->getTimeStamp();
+        }
+    }
+    throw runtime_error("Transaction with ID " + transactionId + " not found.");
+}
 };
 
 #endif 

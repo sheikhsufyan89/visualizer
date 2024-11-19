@@ -12,8 +12,11 @@ Transaction::Transaction(const string& sender, const string& receiver, double am
       sender(sender), 
       receiver(receiver), 
       amount(amount), 
-      timestamp(time(0)) {  // Initialize timestamp with the current time
+      timestamp(time(0)) {  
 }
+
+Transaction::Transaction( const string& sender, const string& receiver, double amount, const string& id)
+    : Entity(id), sender(sender), receiver(receiver), amount(amount), timestamp(time(0)) {}
 
 string Transaction::generateTransactionId() {
     return "TX" + to_string(++counter);  
@@ -28,12 +31,15 @@ void Transaction::display() const {
     cout << "  Timestamp: " << ctime(&timestamp);  
 }
 
-string Transaction::getsender() const {
+string Transaction::getSender() const {
     return sender;
 }
 string Transaction::getReceiver() const {
     return receiver;
 }
-// double Transaction::getAmount() const {
-//     return amount;
-// }
+double Transaction::getAmount() const {
+    return amount;
+}
+time_t Transaction::getTimeStamp() const {
+    return timestamp;
+}

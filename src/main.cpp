@@ -6,8 +6,9 @@
 #include "classes/users/CurrentUser.h"
 #include "classes/users/CustomUser.h"
 #include "classes/transactions/Transaction.h"
-#include "classes/transactions/pendingTransactionPool.h"
-
+#include "classes/transactions/PendingTransactionPool.h"
+#include "classes/transactions/SignedPool.h"
+#include "classes/transactions/SignedTransaction.h"
 void serveFile(crow::response& res, const std::string& filePath, const std::string& contentType) {
     std::ifstream file(filePath);
     if (!file) {
@@ -22,7 +23,13 @@ void serveFile(crow::response& res, const std::string& filePath, const std::stri
     res.end();
 }
 
+
+
 PendingTransactionPool* txPool = PendingTransactionPool::getInstance();
+SignedPool* sxPool = SignedPool::getInstance();
+
+
+
 CurrentUser currentUser;
 
 const int MAX_USERS = 10;
@@ -46,7 +53,13 @@ int customUserCount = 2;
 int main() {
     crow::SimpleApp app;
 
-    
+    Transaction* tx1 = new Transaction("user1", "user2", 100.0);
+    Transaction* tx2 = new Transaction("user2", "user1", 50.0);
+    Transaction* tx3 = new Transaction("custom1", "user1", 200.0);
+
+    txPool->addTransaction(tx1);
+    txPool->addTransaction(tx2);
+    txPool->addTransaction(tx3);
 
     CROW_ROUTE(app, "/")([](const crow::request& req, crow::response& res) {
         serveFile(res, "static/index.html", "text/html");
@@ -110,18 +123,6 @@ int main() {
         serveFile(res, "static/css/" + filename, "text/css");
     });
 
-    // CROW_ROUTE(app, "/assets/<string>")([](std::string filename) {
-    //     crow::response res;
-    //     std::ifstream video_file("assets/" + filename, std::ios::binary);
-    //     if (video_file) {
-    //         res.set_header("Content-Type", "video/mp4");
-    //         res.body = std::string((std::istreambuf_iterator<char>(video_file)),
-    //                                std::istreambuf_iterator<char>());
-    //     } else {
-    //         res.code = 404;
-    //     }
-    //     return res;
-    // });
     CROW_ROUTE(app, "/assets/<string>")([](std::string filename) {
     crow::response res;
     std::ifstream file("assets/" + filename, std::ios::binary);
@@ -213,38 +214,88 @@ CROW_ROUTE(app, "/addTransaction").methods("POST"_method)([](const crow::request
     double amount = body["amount"].d();
 
     Transaction* tx = new Transaction(sender, recipient, amount);
+    // cout << tx->getTimeStamp();
     if (txPool->addTransaction(tx)) {
-        return crow::response(200, "Transaction created successfully");
+        crow::json::wvalue response;
+        response["message"] = "Transaction created successfully";
+        response["transactionId"] = tx->getId();  
+        return crow::response(200, response);
     } else {
-        return crow::response(400, "Transaction failed");
+        crow::json::wvalue errorResponse;
+        errorResponse["message"] = "Transaction failed";
+        return crow::response(400, errorResponse);
     }
 });
 
-    // CROW_ROUTE(app, "/pendingTransactions")([] {
-    //     PendingTransactionPool* pool = PendingTransactionPool::getInstance();
-    //     crow::json::wvalue response;
-    //     int index = 0;
 
-    //     for (int i = 0; i < pool->getPendingCount(); ++i) {
-    //         Transaction* tx = pool->getTransactionAt(i); 
-    //         if (tx) {
-    //             crow::json::wvalue transactionJson;
-    //             transactionJson["id"] = tx->getId();
-    //             transactionJson["sender"] = tx->getSender();
-    //             transactionJson["recipient"] = tx->getRecipient();
-    //             transactionJson["amount"] = tx->getAmount();
-    //             response[index++] = std::move(transactionJson);
-    //         }
-    //     }
+CROW_ROUTE(app, "/hash").methods("POST"_method)([](const crow::request& req) {
+    auto body = crow::json::load(req.body);
 
-    //     return crow::response(200, response);
-    // });
+    if (!body) {
+        std::cerr << "Invalid JSON: " << req.body << std::endl;
+        return crow::response(400, "Invalid JSON data");
+    }
+    std::string id = body["transactionId"].s();
+    std::string sender = body["sender"].s();
+    std::string receiver = body["receiver"].s();
+    std::string signed_by = body["signed_by"].s();
+    double amount = body["amount"].d();
+    // std::string time = body["time"].s();
+    // std::cout << "Transaction Details: " << id << std::endl;
+    // std::cout << "Sender: " << sender << std::endl;
+    // std::cout << "Recipient: " << receiver << std::endl;
+    // std::cout << "Amount: " << amount << std::endl;
+    
+    time_t x = txPool->getTransactionTimestamp(id);
+    std::cout << "time: " << x << std::endl;
+    
+    crow::json::wvalue response;
+    response["message"] = "Transaction received successfully";
+    response["id"] = id;
+    response["sender"] = sender;
+    response["recipient"] = receiver;
+    response["amount"] = amount;
+    response["signed_by"] = signed_by;
+    std::cout << "Transaction ID: " << id << std::endl;
+    std::cout << "Sender: " << sender << std::endl;
+    std::cout << "Recipient: " << receiver << std::endl;
+    std::cout << "Amount: " << amount << std::endl;
+    std::cout << "Signed By: " <<  endl<< std::endl;
+
+    
+
+    txPool->removeTransaction(id);
+    int hash = 0;
+
+    SignedTransaction* sx = new SignedTransaction(id, sender, receiver, amount, hash, signed_by);
+    sxPool->addSTransaction(sx);
+
+    
+    
+    return crow::response(200, response);
+  
+});
 
 
+    CROW_ROUTE(app, "/pendingTransactions")([] {
+        PendingTransactionPool* pool = PendingTransactionPool::getInstance();
+        crow::json::wvalue response;
+        int index = 0;
 
+        for (int i = 0; i < pool->getPendingCount(); ++i) {
+            Transaction* tx = pool->getTransactionAt(i); 
+            if (tx) {
+                crow::json::wvalue transactionJson;
+                transactionJson["id"] = tx->getId();
+                transactionJson["sender"] = tx->getSender();
+                transactionJson["receiver"] = tx->getReceiver();
+                transactionJson["amount"] = tx->getAmount();
+                response[index++] = std::move(transactionJson);
+            }
+        }
 
-
-
+        return crow::response(200, response);
+    });
 
     app.port(8080).multithreaded().run();
     return 0;

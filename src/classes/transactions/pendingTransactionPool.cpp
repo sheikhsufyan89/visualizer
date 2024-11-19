@@ -1,5 +1,5 @@
 #include "pendingTransactionPool.h"
-#include "transaction.h" // Now include the full definition of Transaction class here
+#include "transaction.h" 
 
 using namespace std;
 
@@ -16,7 +16,6 @@ bool PendingTransactionPool::addTransaction(Transaction* tx) {
 bool PendingTransactionPool::removeTransaction(const std::string& transactionId) {
     for (int i = 0; i < pendingCount; ++i) {
         if (pendingTransactions[i]->getId() == transactionId) {
-            // Shift remaining transactions to remove the one at index i
             for (int j = i; j < pendingCount - 1; ++j) {
                 pendingTransactions[j] = pendingTransactions[j + 1];
             }
@@ -24,14 +23,14 @@ bool PendingTransactionPool::removeTransaction(const std::string& transactionId)
             return true;
         }
     }
-    return false;  // Transaction ID not found
+    return false;  
 }
 
 void PendingTransactionPool::processTransaction(const std::string& transactionId) {
     for (int i = 0; i < pendingCount; ++i) {
         if (pendingTransactions[i]->getId() == transactionId) {
             std::cout << "Processing transaction: " << transactionId << std::endl;
-            removeTransaction(transactionId);  // Remove after processing
+            removeTransaction(transactionId);
             break;
         }
     }

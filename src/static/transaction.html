@@ -9,15 +9,15 @@
   <body>
     <div class="container">
       <div class="dashboard">
-        <div>
-          <span id="username-display"></span><span id="role-display"></span>
+        <div class="greeting-container">
+          <span class="greeting-text">Hello!</span>
+          <span id="username-display" class="username">User</span>
         </div>
+
         <div class="navbar">
-          <a href="#" id="nav-transaction-form" class="active"
-            >Transaction Form</a
-          >
-          <a href="#" id="nav-pending-transactions">Pending Transactions</a>
-          <a href="#" id="nav-signed-transactions">Signed Transactions</a>
+          <a href="#" id="nav-transaction-form" class="active">Add</a>
+          <a href="#" id="nav-pending-transactions">Pending</a>
+          <a href="#" id="nav-signed-transactions">Signed </a>
         </div>
 
         <div class="content">
@@ -49,6 +49,7 @@
           <div id="pending-transactions-section">
             <h2>Pending Transactions</h2>
             <ul id="pending-transactions-list"></ul>
+            <button type="submit" id="hash-button">Hash</button>
           </div>
           <div id="signed-transactions-section">
             <h2>Signed Transactions</h2>
@@ -57,9 +58,11 @@
         </div>
       </div>
 
-      <div class="visualizer"></div>
+      <div class="visualizer">
+        <h1>Blockchain Visualizer</h1>
+        <div class="blockchain" id="blockchain-container"></div>
+      </div>
     </div>
-
     <script>
       // function playSound() {
       //   const audio = new Audio("../assets/sound.mp3"); // Adjust the path to your sound file
@@ -69,6 +72,8 @@
       //   }); // Catch any autoplay restrictions
       // }
       // playSound();
+
+      let currentUser = null;
       document.addEventListener("DOMContentLoaded", async () => {
         const navTransactionForm = document.getElementById(
           "nav-transaction-form"
@@ -125,8 +130,6 @@
           showSection(signedTransactionsSection, navSignedTransactions);
         });
 
-        let currentUser = null;
-
         try {
           const response = await fetch("http://localhost:8080/currentUser");
           if (response.status === 200) {
@@ -139,21 +142,9 @@
             alert("User is not logged in.");
           }
         } catch (error) {
-          alert("An error occurred: " + error.message);
+          // alert("An error occurred: " + error.message);
         }
 
-        // const transactionForm = document.getElementById("transaction-form");
-        // transactionForm.addEventListener("submit", async (e) => {
-        //   e.preventDefault();
-
-        //   const recipient = document.getElementById("recipient").value;
-        //   const amount = document.getElementById("amount").value;
-
-        //   const transactionData = {
-        //     sender: currentUser.username,
-        //     recipient: recipient,
-        //     amount: parseFloat(amount),
-        //   };
         document
           .getElementById("transaction-form")
           .addEventListener("submit", async (event) => {
@@ -176,21 +167,155 @@
                 }
               );
 
-              if (response.status === 200) {
+              if (response.ok) {
                 const result = await response.json();
-                // Assuming the backend returns a message or transactionId
                 alert(
                   "Transaction added successfully! Transaction ID: " +
                     result.transactionId
                 );
               } else {
                 const error = await response.json();
-                alert("Error: " + error.message); // Handle error response
+                alert("Error: " + error.message);
               }
             } catch (error) {
-              alert("An error occurred: " + error.message); // Handle network/other errors
+              // alert("An error occurred: " + error.message);
             }
           });
+      });
+
+      document.addEventListener("DOMContentLoaded", async () => {
+        const pendingTransactionsList = document.getElementById(
+          "pending-transactions-list"
+        );
+
+        async function fetchPendingTransactions() {
+          try {
+            const response = await fetch(
+              "http://localhost:8080/pendingTransactions"
+            );
+            if (response.ok) {
+              const transactions = await response.json();
+              pendingTransactionsList.innerHTML = "";
+              for (let key in transactions) {
+                const transaction = transactions[key];
+                const listItem = document.createElement("li");
+                listItem.classList.add("transaction-item");
+                listItem.innerHTML = `
+              <div class="transaction">
+                <span class="tx-id">${transaction.id}</span>
+                <span class="tx-sender">Sender: ${transaction.sender}</span>
+                <span class="tx-recipient">Recipient: ${transaction.receiver}</span>
+                <span class="tx-amount"><img src="../assets/solana.png" alt="Solana" class="solana-icon" /> ${transaction.amount}</span>
+              </div>
+            `;
+                listItem.addEventListener("click", () => {
+                  selectTransaction(transaction, listItem);
+                });
+                pendingTransactionsList.appendChild(listItem);
+              }
+            } else {
+              alert("Failed to fetch pending transactions.");
+            }
+          } catch (error) {
+            alert(
+              "An error occurred while fetching transactions: " + error.message
+            );
+          }
+        }
+        const navPendingTransactions = document.getElementById(
+          "nav-pending-transactions"
+        );
+        navPendingTransactions.addEventListener(
+          "click",
+          fetchPendingTransactions
+        );
+        fetchPendingTransactions();
+      });
+
+      const container = document.getElementById("blockchain-container");
+
+      const blocks = Array.from({ length: 30 }, (_, i) => ({
+        blockNumber: i + 1,
+        hash: `hash${i + 1}`,
+        previousHash: i === 0 ? "000000" : `hash${i}`,
+      }));
+
+      function renderBlockchain(blocks) {
+        let currentRow = null;
+        blocks.forEach((block, index) => {
+          if (index % 5 === 0) {
+            currentRow = document.createElement("div");
+            currentRow.classList.add("row");
+            if (Math.floor(index / 5) % 2 !== 0) {
+              currentRow.classList.add("reverse");
+            }
+            container.appendChild(currentRow);
+          }
+          const blockElement = document.createElement("div");
+          blockElement.classList.add("block");
+          blockElement.innerHTML = `
+            <h3>Block ${block.blockNumber}</h3>
+            <p>Hash: ${block.hash}</p>
+            <p>Previous: ${block.previousHash}</p>
+      `;
+          currentRow.appendChild(blockElement);
+          if ((index + 1) % 5 !== 0 && index !== blocks.length - 1) {
+            const arrowElement = document.createElement("div");
+            arrowElement.classList.add("arrow");
+            if (Math.floor(index / 5) % 2 !== 0) {
+              arrowElement.classList.add("reverse");
+            }
+            arrowElement.textContent = "⟶";
+            currentRow.appendChild(arrowElement);
+          }
+        });
+      }
+
+      renderBlockchain(blocks);
+
+      const hashButton = document.getElementById("hash-button");
+      let selectedTransaction = null;
+      function selectTransaction(transaction, listItem) {
+        const previousSelected = document.querySelector(".selected");
+        if (previousSelected) previousSelected.classList.remove("selected");
+        listItem.classList.add("selected");
+        selectedTransaction = transaction;
+        hashButton.disabled = false;
+      }
+
+      hashButton.addEventListener("click", async () => {
+        if (selectedTransaction) {
+          try {
+            const response = await fetch("http://localhost:8080/hash", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+
+              body: JSON.stringify({
+                transactionId: selectedTransaction.id,
+                sender: selectedTransaction.sender,
+                receiver: selectedTransaction.receiver,
+                amount: parseFloat(selectedTransaction.amount),
+                signed_by: currentUser.username,
+              }),
+            });
+            if (response.ok) {
+              const result = await response.json();
+              alert(
+                "Transaction hashed successfully! Transaction ID: " +
+                  timestampString
+              );
+            } else {
+              const error = await response.json();
+              alert("Error: " + error.message);
+            }
+          } catch (error) {
+            alert("An error occurred: " + error.message);
+          }
+        } else {
+          alert("No transaction selected.");
+        }
       });
     </script>
   </body>
