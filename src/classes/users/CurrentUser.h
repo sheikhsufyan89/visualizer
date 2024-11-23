@@ -15,7 +15,6 @@ public:
         role = userRole;
         loggedIn = true;
 
-        // Initialize the user based on role
         if (role == "standard") {
             currentStandardUser = StandardUser(username, password);
         } else if (role == "custom") {
@@ -44,15 +43,14 @@ public:
         return username;
     }
 
-    // Method to calculate hash based on user role
-    int calculateHash(const string& transactionData, time_t transactionTime) {
+
+    unsigned int calculateHash(const string& transactionData, time_t transactionTime) {
         if (role == "standard") {
             return currentStandardUser.hashTransaction(transactionData, transactionTime); 
         } else if (role == "custom") {
-            // Assuming CustomUser has its own hash method
             return currentCustomUser.hashTransaction(transactionData, transactionTime); 
         }
-        return 0; // Default case if no role matches
+        return 0; 
     }
 
 private:

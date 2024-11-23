@@ -119,38 +119,82 @@ int main() {
 
 
 
-    CROW_ROUTE(app, "/static/css/<string>")([](const crow::request& req, crow::response& res, std::string filename) {
-        serveFile(res, "static/css/" + filename, "text/css");
-    });
+//     CROW_ROUTE(app, "/static/css/<string>")([](const crow::request& req, crow::response& res, std::string filename) {
+//         serveFile(res, "static/css/" + filename, "text/css");
+//     });
 
-    CROW_ROUTE(app, "/assets/<string>")([](std::string filename) {
+//     CROW_ROUTE(app, "/assets/<string>")([](std::string filename) {
+//     crow::response res;
+//     std::ifstream file("assets/" + filename, std::ios::binary);
+    
+//     auto ends_with = [](const std::string& str, const std::string& suffix) {
+//         return str.size() >= suffix.size() &&
+//                str.compare(str.size() - suffix.size(), suffix.size(), suffix) == 0;
+//     };
+
+//     if (file) {
+//         // Set the correct MIME type based on the file extension
+//         if (ends_with(filename, ".mp3")) {
+//             res.set_header("Content-Type", "audio/mpeg");
+//         } else if (ends_with(filename, ".mp4")) {
+//             res.set_header("Content-Type", "video/mp4");
+//         } else {
+//             res.set_header("Content-Type", "application/octet-stream");
+//         }
+
+//         // Read the file content and set the response body
+//         res.body = std::string((std::istreambuf_iterator<char>(file)),
+//                                std::istreambuf_iterator<char>());
+//         res.code = 200;
+//     } else {
+//         res.code = 404;
+//         res.body = "File not found.";
+//     }
+    
+//     return res;
+// });
+CROW_ROUTE(app, "/static/css/<string>")
+([](const crow::request& req, crow::response& res, std::string filename) {
+    serveFile(res, "static/css/" + filename, "text/css");
+});
+
+CROW_ROUTE(app, "/assets/<string>")
+([](std::string filename) {
     crow::response res;
     std::ifstream file("assets/" + filename, std::ios::binary);
-    
+
+    // Helper function to check file extension
     auto ends_with = [](const std::string& str, const std::string& suffix) {
         return str.size() >= suffix.size() &&
                str.compare(str.size() - suffix.size(), suffix.size(), suffix) == 0;
     };
 
     if (file) {
-        // Set the correct MIME type based on the file extension
+        // Set MIME type based on file extension
         if (ends_with(filename, ".mp3")) {
             res.set_header("Content-Type", "audio/mpeg");
         } else if (ends_with(filename, ".mp4")) {
             res.set_header("Content-Type", "video/mp4");
+        } else if (ends_with(filename, ".js")) {
+            res.set_header("Content-Type", "application/javascript");
+        } else if (ends_with(filename, ".css")) {
+            res.set_header("Content-Type", "text/css");
+        } else if (ends_with(filename, ".html")) {
+            res.set_header("Content-Type", "text/html");
         } else {
             res.set_header("Content-Type", "application/octet-stream");
         }
 
-        // Read the file content and set the response body
+        // Read the file content and set it as the response body
         res.body = std::string((std::istreambuf_iterator<char>(file)),
                                std::istreambuf_iterator<char>());
         res.code = 200;
     } else {
+        // Handle file not found
         res.code = 404;
         res.body = "File not found.";
     }
-    
+
     return res;
 });
 
@@ -246,8 +290,6 @@ CROW_ROUTE(app, "/hash").methods("POST"_method)([](const crow::request& req) {
     // std::cout << "Recipient: " << receiver << std::endl;
     // std::cout << "Amount: " << amount << std::endl;
     
-    time_t x = txPool->getTransactionTimestamp(id);
-    std::cout << "time: " << x << std::endl;
     
     crow::json::wvalue response;
     response["message"] = "Transaction received successfully";
@@ -260,14 +302,17 @@ CROW_ROUTE(app, "/hash").methods("POST"_method)([](const crow::request& req) {
     std::cout << "Sender: " << sender << std::endl;
     std::cout << "Recipient: " << receiver << std::endl;
     std::cout << "Amount: " << amount << std::endl;
-    std::cout << "Signed By: " <<  endl<< std::endl;
+    std::cout << "Signed By: " << signed_by <<  endl<< std::endl;
 
-    
+    string transactionData = sender + receiver + to_string(amount);
+    time_t timestamp = txPool->getTransactionTimestamp(id);
+    std::cout << "Signing time: " << timestamp << std::endl;
+
 
     txPool->removeTransaction(id);
-    int hash = 0;
+    unsigned int hash = currentUser.calculateHash(transactionData, timestamp);
 
-    SignedTransaction* sx = new SignedTransaction(id, sender, receiver, amount, hash, signed_by);
+    SignedTransaction* sx = new SignedTransaction(id, sender, receiver, amount, hash, signed_by, timestamp);
     sxPool->addSTransaction(sx);
 
     
@@ -297,6 +342,31 @@ CROW_ROUTE(app, "/hash").methods("POST"_method)([](const crow::request& req) {
         return crow::response(200, response);
     });
 
+    CROW_ROUTE(app, "/signedTransactions")([] {
+        SignedPool* pool = SignedPool::getInstance();
+        crow::json::wvalue response;
+        int index = 0;
+
+        for (int i = 0; i < pool->getPendingCount(); ++i) {
+            SignedTransaction* tx = pool->getTransaction(i); 
+            if (tx) {
+                crow::json::wvalue transactionJson;
+                transactionJson["id"] = tx->getId();
+                transactionJson["sender"] = tx->getSender();
+                transactionJson["receiver"] = tx->getReceiver();
+                transactionJson["amount"] = tx->getAmount();
+                transactionJson["signed_by"] = tx->getSignedBy();
+                transactionJson["hash"] = tx->getHashVal();
+                transactionJson["time"] = tx->getTimeStamp();
+                
+                response[index++] = std::move(transactionJson);
+            }
+        }
+
+        return crow::response(200, response);
+    });
+
     app.port(8080).multithreaded().run();
     return 0;
 }
+

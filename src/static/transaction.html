@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -318,5 +318,80 @@
         }
       });
     </script>
+  </body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Transaction</title>
+    <link rel="stylesheet" href="static/css/transaction.css" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="dashboard">
+        <div class="greeting-container">
+          <span class="greeting-text">Hello!</span>
+          <span id="username-display" class="username">User</span>
+        </div>
+
+        <div class="navbar">
+          <a href="#" id="nav-transaction-form" class="active">Add</a>
+          <a href="#" id="nav-pending-transactions">Pending</a>
+          <a href="#" id="nav-signed-transactions">Signed</a>
+        </div>
+
+        <div class="content">
+          <div id="transaction-form-section" class="active">
+            <h2>Transaction Form</h2>
+            <form id="transaction-form">
+              <label for="recipient">Recipient:</label>
+              <input
+                type="text"
+                id="recipient"
+                name="recipient"
+                placeholder="Enter recipient name"
+                required
+              />
+
+              <label for="amount">Amount:</label>
+              <input
+                type="number"
+                id="amount"
+                name="amount"
+                placeholder="Enter amount"
+                required
+              />
+
+              <button type="submit">Submit Transaction</button>
+            </form>
+          </div>
+
+          <div id="pending-transactions-section">
+            <h2>Pending Transactions</h2>
+            <ul id="pending-transactions-list"></ul>
+            <button type="submit" id="hash-button">Hash</button>
+          </div>
+
+          <div id="signed-transactions-section">
+            <h2>Signed Transactions</h2>
+            <ul id="signed-transactions-list"></ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="visualizer">
+        <h1>Blockchain Visualizer</h1>
+        <div class="blockchain" id="blockchain-container"></div>
+      </div>
+    </div>
+
+    <!-- Load JavaScript -->
+    <script src="static/js/nav.js"></script>
+    <script src="static/js/transaction.js"></script>
+    <script src="static/js/blockchain.js"></script>
+    <script src="static/js/transactionMain.js"></script>
   </body>
 </html>
