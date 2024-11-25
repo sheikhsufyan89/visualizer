@@ -1,4 +1,5 @@
 #include "ValidatedTransaction.h"
+#include "SignedTransaction.h"
 #include <iostream>
 
 ValidatedTransaction::ValidatedTransaction(const std::string& id, const std::string& sender, 
@@ -12,6 +13,7 @@ void ValidatedTransaction::display() const {
               << ", Amount: " << amount 
               << ", Timestamp: " << timestamp << std::endl;
 }
+
 
 std::string ValidatedTransaction::getSender() const { return sender; }
 std::string ValidatedTransaction::getReceiver() const { return receiver; }
