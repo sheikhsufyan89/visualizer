@@ -794,7 +794,7 @@ int main() {
 
     cout << "Transactions added to the pool" << endl;
 
-    Miner miner(0);  // Difficulty of 1 for mining
+    Miner miner(1);  // Difficulty of 1 for mining
 
     ValidationPool* validationPool = ValidationPool::getInstance("MyValidationPool");
 

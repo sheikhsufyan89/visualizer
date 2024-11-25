@@ -43,6 +43,7 @@ class Miner {
         // std::vector<SignedTransaction*> ValidTransactions;
         std::vector<ValidatedTransaction*> ValidTransactions;
         int difficulty;
+        double wallet;   // Miner's wallet to store the bitcoin rewarded on mining a block. Current reward set is 0.31 BTC
 
 
     public:
@@ -63,6 +64,8 @@ class Miner {
         void mineBlock(Block &block);
 
         bool meetsDifficulty(const std::string &hash);
+
+        void displayWallet() const;
 };
 
 #endif

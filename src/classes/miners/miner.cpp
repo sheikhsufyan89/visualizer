@@ -175,15 +175,22 @@ void Miner::mineBlock(Block &block) {
         cout << endl;
         cout << "Block mined with hash: " << currentHash << endl;
         cout << endl;
+        wallet += 0.31;
+
+        displayWallet();
     }
 
 }
 
 
 
-
-
-
 bool Miner::meetsDifficulty(const std::string &hash) {
     return hash.substr(0, difficulty) == std::string(difficulty, '0');  //Difficulty is the number of leading zeros
+}
+
+
+
+void Miner::displayWallet() const {
+    cout << "Miner's wallet balance now is: " << wallet << " BTC" << endl;
+    cout << endl;
 }
