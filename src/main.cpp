@@ -25,10 +25,133 @@ void serveFile(crow::response& res, const std::string& filePath, const std::stri
 
 
 
+
+void writeCodeToFile(const std::string& hashFunction, const std::string& filename) {
+    std::ofstream file(filename);
+    if (file.is_open()) {
+        file << "#include <iostream>\n"
+             << "#include <string>\n"
+             << "#include <ctime>\n"
+            //  << "unsigned int hashTransaction(const std::string& transactionData, time_t transactionTime) {\n"
+             << hashFunction << "\n"
+            //  << "}\n"
+             << "int main() {\n"
+             << "    std::string transactionData = \"SampleData\";\n"
+             << "    time_t transactionTime = 123456789;\n"
+             << "    try {\n"
+             << "        std::cout << hashTransaction(transactionData, transactionTime) << std::endl;\n"
+             << "    } catch (...) {\n"
+             << "        return 1; // Indicate an error in the hash function\n"
+             << "    }\n"
+             << "    return 0;\n"
+             << "}\n";
+        file.close();
+    } else {
+        std::cerr << "Error: Could not open file for writing hash function.\n";
+        exit(1);
+    }
+}
+
+void writeHashFunctionToFile(const std::string& hashFunction, const std::string& filename, const std::string& transactionData, time_t transactionTime) {
+    std::ofstream file(filename);
+    if (file.is_open()) {
+        file << "#include <iostream>\n"
+             << "#include <string>\n"
+             << "#include <ctime>\n"
+             << hashFunction << "\n"
+             << "int main() {\n"
+             << "    std::string transactionData = \"" << transactionData << "\";\n"
+             << "    time_t transactionTime = " << transactionTime << ";\n"
+             << "    try {\n"
+             << "        std::cout << hashTransaction(transactionData, transactionTime) << std::endl;\n"
+             << "    } catch (...) {\n"
+             << "        return 1; // Indicate an error in the hash function\n"
+             << "    }\n"
+             << "    return 0;\n"
+             << "}\n";
+        file.close();
+    } else {
+        std::cerr << "Error: Could not open file for writing hash function.\n";
+        exit(1);
+    }
+}
+
+int compileAndExecute(const std::string& cppFile, const std::string& executable) {
+    std::string command = "g++ " + cppFile + " -o " + executable;
+    int result = std::system(command.c_str());
+    if (result != 0) {
+        std::cerr << "Error: Compilation failed.\n";
+        exit(1);
+    }
+
+    command = executable + ".exe > output.txt";
+    result = std::system(command.c_str());
+    if (result != 0) {
+        std::cerr << "Error: Execution failed.\n";
+        exit(1);
+    }
+
+    return 0;
+}
+
+bool compileCode(const std::string& cppFile) {
+    std::string command = "g++ -o test_program " + cppFile; 
+    int result = std::system(command.c_str());
+    return result == 0; 
+}
+
+
+bool validateHashFunction(const std::string& hashFunction) {
+    if (hashFunction.find("unsigned int hashTransaction(const std::string& transactionData, time_t timestamp)") == std::string::npos ||
+        hashFunction.find("unsigned int") == std::string::npos) {
+        std::cerr << "Error: Incorrect function signature or return type.\n";
+        return false;
+    }
+
+    const std::string cppFile = "user_hash_function.cpp";
+    writeCodeToFile(hashFunction, cppFile);
+
+    if (!compileCode(cppFile)) {
+        std::cerr << "Error: Compilation failed due to syntax or other issues.\n";
+        return false;
+    }
+
+    return true; 
+}
+
+
+
+unsigned int readOutputFromFile(const std::string& filename) {
+    std::ifstream file(filename);
+    if (!file.is_open()) {
+        std::cerr << "Error: Could not open output file for reading.\n";
+        exit(1);
+    }
+
+    unsigned int output = 0;
+    file >> output; 
+
+    if (file.fail()) {
+        std::cerr << "Error: Failed to read unsigned int from file.\n";
+        exit(1);
+    }
+
+    file.close();
+    return output;
+}
+
+unsigned int executeHashFunction(const string& hashFunction, const string& transactionData, time_t transactionTime) {
+    string cppFile = "hash_function_execution.cpp";
+    string executable = "hash_program";
+    string outputFile = "output.txt";
+    writeHashFunctionToFile(hashFunction, cppFile, transactionData, transactionTime);
+    compileAndExecute(cppFile, executable);
+    unsigned int output = readOutputFromFile(outputFile);
+    return output;
+}
+
 PendingTransactionPool* txPool = PendingTransactionPool::getInstance();
 SignedPool* sxPool = SignedPool::getInstance();
-
-
 
 CurrentUser currentUser;
 
@@ -81,28 +204,25 @@ int main() {
     }
 });
 
+CROW_ROUTE(app, "/transaction")([](const crow::request& req, crow::response& res) {
+    if (currentUser.isLoggedIn()) {
+        serveFile(res, "static/transaction.html", "text/html");
+    } else {
+        res.code = 403;
+        res.body = "Access denied.";
+        res.end();
+    }
+});
 
-    
-
-    CROW_ROUTE(app, "/transaction")([](const crow::request& req, crow::response& res) {
-        if (currentUser.isLoggedIn()) {
-            serveFile(res, "static/transaction.html", "text/html");
-        } else {
-            res.code = 403;
-            res.body = "Access denied.";
-            res.end();
-        }
-    });
-
-    CROW_ROUTE(app, "/miner")([](const crow::request& req, crow::response& res) {
-        if (currentUser.isLoggedIn() && currentUser.getRole() == "miner") {
-            serveFile(res, "static/miner.html", "text/html");
-        } else {
-            res.code = 403;
-            res.body = "Access denied.";
-            res.end();
-        }
-    });
+CROW_ROUTE(app, "/miner")([](const crow::request& req, crow::response& res) {
+    if (currentUser.isLoggedIn() && currentUser.getRole() == "miner") {
+        serveFile(res, "static/miner.html", "text/html");
+    } else {
+        res.code = 403;
+        res.body = "Access denied.";
+        res.end();
+    }
+});
 
    CROW_ROUTE(app, "/login")([](const crow::request& req, crow::response& res) {
     if (currentUser.isLoggedIn()) {
@@ -117,42 +237,6 @@ int main() {
     res.end();
 });
 
-
-
-//     CROW_ROUTE(app, "/static/css/<string>")([](const crow::request& req, crow::response& res, std::string filename) {
-//         serveFile(res, "static/css/" + filename, "text/css");
-//     });
-
-//     CROW_ROUTE(app, "/assets/<string>")([](std::string filename) {
-//     crow::response res;
-//     std::ifstream file("assets/" + filename, std::ios::binary);
-    
-//     auto ends_with = [](const std::string& str, const std::string& suffix) {
-//         return str.size() >= suffix.size() &&
-//                str.compare(str.size() - suffix.size(), suffix.size(), suffix) == 0;
-//     };
-
-//     if (file) {
-//         // Set the correct MIME type based on the file extension
-//         if (ends_with(filename, ".mp3")) {
-//             res.set_header("Content-Type", "audio/mpeg");
-//         } else if (ends_with(filename, ".mp4")) {
-//             res.set_header("Content-Type", "video/mp4");
-//         } else {
-//             res.set_header("Content-Type", "application/octet-stream");
-//         }
-
-//         // Read the file content and set the response body
-//         res.body = std::string((std::istreambuf_iterator<char>(file)),
-//                                std::istreambuf_iterator<char>());
-//         res.code = 200;
-//     } else {
-//         res.code = 404;
-//         res.body = "File not found.";
-//     }
-    
-//     return res;
-// });
 CROW_ROUTE(app, "/static/css/<string>")
 ([](const crow::request& req, crow::response& res, std::string filename) {
     serveFile(res, "static/css/" + filename, "text/css");
@@ -162,15 +246,12 @@ CROW_ROUTE(app, "/assets/<string>")
 ([](std::string filename) {
     crow::response res;
     std::ifstream file("assets/" + filename, std::ios::binary);
-
-    // Helper function to check file extension
     auto ends_with = [](const std::string& str, const std::string& suffix) {
         return str.size() >= suffix.size() &&
                str.compare(str.size() - suffix.size(), suffix.size(), suffix) == 0;
     };
 
     if (file) {
-        // Set MIME type based on file extension
         if (ends_with(filename, ".mp3")) {
             res.set_header("Content-Type", "audio/mpeg");
         } else if (ends_with(filename, ".mp4")) {
@@ -185,12 +266,10 @@ CROW_ROUTE(app, "/assets/<string>")
             res.set_header("Content-Type", "application/octet-stream");
         }
 
-        // Read the file content and set it as the response body
         res.body = std::string((std::istreambuf_iterator<char>(file)),
                                std::istreambuf_iterator<char>());
         res.code = 200;
     } else {
-        // Handle file not found
         res.code = 404;
         res.body = "File not found.";
     }
@@ -258,7 +337,6 @@ CROW_ROUTE(app, "/addTransaction").methods("POST"_method)([](const crow::request
     double amount = body["amount"].d();
 
     Transaction* tx = new Transaction(sender, recipient, amount);
-    // cout << tx->getTimeStamp();
     if (txPool->addTransaction(tx)) {
         crow::json::wvalue response;
         response["message"] = "Transaction created successfully";
@@ -271,56 +349,45 @@ CROW_ROUTE(app, "/addTransaction").methods("POST"_method)([](const crow::request
     }
 });
 
-
 CROW_ROUTE(app, "/hash").methods("POST"_method)([](const crow::request& req) {
     auto body = crow::json::load(req.body);
 
-    if (!body) {
-        std::cerr << "Invalid JSON: " << req.body << std::endl;
-        return crow::response(400, "Invalid JSON data");
-    }
-    std::string id = body["transactionId"].s();
-    std::string sender = body["sender"].s();
-    std::string receiver = body["receiver"].s();
-    std::string signed_by = body["signed_by"].s();
+    string id = body["transactionId"].s();
+    string sender = body["sender"].s();
+    string receiver = body["receiver"].s();
+    string signed_by = body["signed_by"].s();
     double amount = body["amount"].d();
-    // std::string time = body["time"].s();
-    // std::cout << "Transaction Details: " << id << std::endl;
-    // std::cout << "Sender: " << sender << std::endl;
-    // std::cout << "Recipient: " << receiver << std::endl;
-    // std::cout << "Amount: " << amount << std::endl;
-    
-    
+    string hashFunction = body["hashfunction"].s();
+
+    string transactionData = sender + receiver + to_string(amount);
+    time_t timestamp = txPool->getTransactionTimestamp(id);
+
+    unsigned int hash;
+    if (!hashFunction.empty() && currentUser.getRole() == "custom") {
+        string cppFile = "hash_function_test.cpp";
+        if (validateHashFunction(hashFunction)) {
+            hash = executeHashFunction(hashFunction, transactionData, timestamp);
+        } else {
+            return crow::response(400, "Invalid hash function");
+        }
+    } else {
+        hash = currentUser.calculateHash(transactionData, timestamp);
+    }
+
+    SignedTransaction* sx = new SignedTransaction(id, sender, receiver, amount, hash, signed_by, timestamp);
+    sxPool->addSTransaction(sx);
+
     crow::json::wvalue response;
-    response["message"] = "Transaction received successfully";
     response["id"] = id;
     response["sender"] = sender;
     response["recipient"] = receiver;
     response["amount"] = amount;
     response["signed_by"] = signed_by;
-    std::cout << "Transaction ID: " << id << std::endl;
-    std::cout << "Sender: " << sender << std::endl;
-    std::cout << "Recipient: " << receiver << std::endl;
-    std::cout << "Amount: " << amount << std::endl;
-    std::cout << "Signed By: " << signed_by <<  endl<< std::endl;
-
-    string transactionData = sender + receiver + to_string(amount);
-    time_t timestamp = txPool->getTransactionTimestamp(id);
-    std::cout << "Signing time: " << timestamp << std::endl;
-
-
+    response["hash"] = hash;
     txPool->removeTransaction(id);
-    unsigned int hash = currentUser.calculateHash(transactionData, timestamp);
 
-    SignedTransaction* sx = new SignedTransaction(id, sender, receiver, amount, hash, signed_by, timestamp);
-    sxPool->addSTransaction(sx);
-
-    
-    
     return crow::response(200, response);
-  
 });
-
 
     CROW_ROUTE(app, "/pendingTransactions")([] {
         PendingTransactionPool* pool = PendingTransactionPool::getInstance();
@@ -365,6 +432,8 @@ CROW_ROUTE(app, "/hash").methods("POST"_method)([](const crow::request& req) {
 
         return crow::response(200, response);
     });
+
+    
 
     app.port(8080).multithreaded().run();
     return 0;

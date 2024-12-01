@@ -1,44 +1,116 @@
 #include <iostream>
+#include <fstream>
+#include <cstdlib>
 #include <string>
-#include <ctime> 
-// #include "classes/users/StandardUser.h"
-// #include "classes/transactions/Transaction.h"
-// #include "classes/users/User.h"
-// #include "classes/users/CurrentUser.h"
-// #include "classes/entity.h"
+#include <cstdio>
 
-using namespace std;
+// Function to write user-provided code to a file
+void writeCodeToFile(const std::string& code, const std::string& filename) {
+    std::ofstream file(filename);
+    if (file.is_open()) {
+        file << code;
+        file.close();
+    } else {
+        std::cerr << "Error: Could not open file for writing.\n";
+        exit(1);
+    }
+}
 
-unsigned int simpleHash(const string& input, time_t transactionTime) {
-    unsigned int hash = 0;
-
-    string timeStr = to_string(transactionTime);
-    string data = input + timeStr; 
-
-    // Iterate over each character of the combined data (input + time)
-    for (char ch : data) {
-        hash = hash * 31 + ch;  // Multiply by 31 and add ASCII value of the character
+// Function to compile and execute the code, redirecting output to a file
+int compileAndExecute(const std::string& cppFile, const std::string& executable) {
+    // Step 1: Compile the code
+    std::string command = "g++ " + cppFile + " -o " + executable;
+    int result = std::system(command.c_str());
+    if (result != 0) {
+        std::cerr << "Error: Compilation failed.\n";
+        exit(1);
     }
 
-    hash ^= (hash >> 16);  // XOR with right-shifted hash
-    hash *= 0x85ebca6b;    // Prime multiplier
-    hash ^= (hash >> 13);  // Additional XOR and shift
+    // Step 2: Execute the compiled program and redirect its output to a file
+    command = executable + ".exe > output.txt";  // Redirect output to a file
+    result = std::system(command.c_str());
+    if (result != 0) {
+        std::cerr << "Error: Execution failed.\n";
+        exit(1);
+    }
 
+    return 0;
+}
+
+// Function to read the output from the file
+std::string readOutputFromFile(const std::string& filename) {
+    std::ifstream file(filename);
+    if (!file.is_open()) {
+        std::cerr << "Error: Could not open output file for reading.\n";
+        exit(1);
+    }
+
+    std::string output;
+    std::string line;
+    while (std::getline(file, line)) {
+        output += line + "\n";
+    }
+
+    file.close();
+    return output;
+}
+
+// Function to check if the user-provided code contains the correct function signature and return type
+bool checkFunctionSignature(const std::string& code) {
+    // Check for the correct return type and function signature
+    if (code.find("std::string hashFunction(const std::string& input)") != std::string::npos &&
+        code.find("std::string") != std::string::npos) {
+        return true;
+    }
+    return false;
+}
+
+int main() {
+    // User-provided code with the correct function signature
+    std::string userCode = R"(
+#include <iostream>
+#include <string>
+
+// Correct function signature as requested
+std::string hashFunction(const std::string& input) {
+    std::string hash;
+    for (char c : input) {
+        hash += std::to_string(static_cast<int>(c) * 2); // Example hash logic
+    }
     return hash;
 }
 
-int main(){
-    // string* users = {};
-    // StandardUser user1("alice", "password123");
-    // StandardUser user2("bob", "bobpassword");
-    // Transaction x1("bob", "sufyan", 100);
-    string sender = "Sufyan";
-    string receiver = "Khadeer";
-    int amount  = 1000;
-    string sum = sender + receiver + to_string(amount);
-    time_t currentTime = time(nullptr);
-    cout << simpleHash(sum, currentTime);
-    
+int main() {
+    std::string input = "Hello, world!";
+    std::string hashValue = hashFunction(input);
+    std::cout << hashValue << std::endl;
+    return 0;
+}
+)";
 
-    return 0;    
+    // Check if the function signature and return type are correct
+    if (!checkFunctionSignature(userCode)) {
+        std::cerr << "Error: Function signature or return type is incorrect.\n";
+        std::cerr << "Expected: std::string hashFunction(const std::string& input)\n";
+        exit(1);
+    } else {
+        std::cout << "Function signature and return type are correct.\n";
+    }
+
+    // Define the filenames
+    std::string cppFile = "hash_function.cpp";
+    std::string executable = "user_program";
+    std::string outputFile = "output.txt";
+
+    // Write, compile, and execute the user code
+    writeCodeToFile(userCode, cppFile);
+    compileAndExecute(cppFile, executable);
+
+    // Read the output from the file
+    std::string output = readOutputFromFile(outputFile);
+
+    // Print the captured hash value
+    std::cout << "Captured hash: " << output << std::endl;
+
+    return 0;
 }

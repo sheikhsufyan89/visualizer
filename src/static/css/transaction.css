@@ -123,46 +123,6 @@ body {
   flex-direction: row-reverse;
 }
 
-.transaction {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #2a2a2a;
-  border: 1px solid #0091cc;
-  padding: 10px;
-  margin-bottom: 15px;
-  border-radius: 5px;
-  box-shadow: 0 0 10px #0091cc;
-  list-style: none;
-  flex-wrap: wrap;
-}
-
-.transaction span {
-  font-size: 14px;
-  color: #ccc;
-}
-
-.tx-id {
-  font-weight: bold;
-  color: #fff;
-}
-
-.tx-sender,
-.tx-recipient {
-  color: #bbb;
-}
-
-.tx-amount {
-  color: #28a745;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.tx-status {
-  color: #ff5722;
-}
-
 .navbar {
   display: flex;
   background-color: #333;
@@ -190,6 +150,7 @@ body {
 }
 
 #transaction-form {
+  list-style: none;
   display: flex;
   flex-direction: column;
   gap: 15px;
@@ -228,7 +189,6 @@ body {
 #transaction-form button {
   padding: 10px;
   background-color: #0091cc;
-  color: white;
   border: none;
   border-radius: 5px;
   font-size: 16px;
@@ -245,15 +205,145 @@ body {
   height: 20px;
   margin-right: 8px;
 }
+
+/* Global styles */
+body,
+html {
+  margin: 0;
+  padding: 0;
+  font-family: "Poppins", sans-serif;
+  background-color: #121212; /* Dark background */
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+/* Container for the transaction */
+.transaction {
+  scrollbar-width: 0;
+  background: linear-gradient(
+    135deg,
+    #1c1c3c,
+    #3545b0
+  ); /* Deep blue gradient */
+  border-radius: 16px;
+  padding: 15px;
+  margin-bottom: 10px;
+  margin-left: 5px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); /* Depth effect */
+  display: flex;
+  justify-content: space-between; /* Space out the transaction details */
+  align-items: center; /* Center the content vertically */
+  max-width: 580px;
+  width: 92%;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+
+  padding-left: 8px;
+}
+
+.transaction:hover {
+  transform: translateY(-5px); /* Subtle lift effect */
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7); /* Stronger shadow on hover */
+}
+
+/* Transaction details */
+.tx-id,
+.tx-sender,
+.tx-recipient,
+.tx-amount {
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.85); /* Soft white text */
+  margin-right: 10px; /* Space between the elements */
+  display: inline-flex;
+  align-items: center;
+}
+
+/* Amount section */
+.tx-amount {
+  font-size: 18px;
+  color: #00bcd4; /* Cyan color for the amount */
+  font-weight: bold;
+  display: inline-flex;
+  align-items: center;
+}
+
+.solana-icon {
+  width: 22px;
+  height: 22px;
+  margin-left: 10px;
+  filter: brightness(0) invert(1); /* Inverted color for the icon */
+}
+
+/* Hover effect for each element */
+.tx-id:hover,
+.tx-sender:hover,
+.tx-recipient:hover,
+.tx-amount:hover {
+  color: #ff4081; /* Pinkish highlight on hover */
+}
+
+/* Glowing effect for important elements */
+.tx-id,
+.tx-amount {
+  text-shadow: 0 0 8px rgba(0, 188, 212, 0.6); /* Cyan glow effect */
+}
+
+/* Mobile responsiveness */
+@media (max-width: 600px) {
+  .transaction {
+    flex-direction: column; /* Stack elements vertically on small screens */
+    padding: 15px;
+  }
+
+  .tx-id,
+  .tx-sender,
+  .tx-recipient,
+  .tx-amount {
+    font-size: 14px;
+    margin-right: 0; /* Remove margin for stacked layout */
+    margin-bottom: 10px; /* Add space between stacked elements */
+  }
+
+  .tx-amount {
+    font-size: 16px;
+  }
+}
+
+.transaction span {
+  font-size: 14px;
+  color: #ccc;
+}
 #pending-transactions-list {
   list-style: none;
   padding: 0;
   margin: 0;
 }
+#signed-transactions-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+/* Style for selected transaction */
+.selected {
+  background-color: #1e2a47;
+  color: #fff;
+  border-left: 5px solid #00bcd4;
+  padding-left: 20px;
+  transform: scale(1.03);
+  box-shadow: 0 0 10px rgba(0, 188, 212, 0.7);
+  transition: all 0.3s ease;
+  position: relative;
+  z-index: 1;
+}
 
-.transaction-item.selected {
-  background-color: #f0f0f0;
-  border: 2px solid #007bff;
+.selected:hover {
+  cursor: pointer;
+  background-color: #253c67;
+  box-shadow: 0 0 15px rgba(0, 188, 212, 0.9);
+  border-left: 5px solid #ff4081;
 }
 
 .greeting-container {
@@ -305,5 +395,219 @@ body {
   100% {
     transform: translateX(0);
     opacity: 1;
+  }
+}
+
+#hash-button {
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+}
+
+#text-editor {
+  display: none; /* Initially hidden */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80%;
+  height: 60%;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(10px);
+  color: #00ffc6;
+  font-family: "Fira Code", monospace;
+  font-size: 16px;
+  padding: 20px;
+  resize: both;
+  overflow: auto;
+  border: 2px dashed rgba(0, 255, 198, 0.7);
+  box-shadow: 0 0 20px rgba(0, 255, 198, 0.5);
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  z-index: 10;
+  line-height: 1.5;
+  caret-color: #00ffc6;
+  transition: all 0.3s ease-in-out;
+}
+
+#text-editor:hover {
+  box-shadow: 0 0 25px rgba(0, 255, 198, 0.8);
+  border-color: rgba(0, 255, 198, 1);
+}
+
+#text-editor:focus {
+  outline: none;
+  box-shadow: 0 0 30px rgba(0, 255, 198, 1);
+}
+
+#text-editor * {
+  color: inherit;
+  font-family: inherit;
+  background-color: transparent;
+  font-size: inherit;
+  text-shadow: 0 0 5px rgba(0, 255, 198, 0.8);
+}
+
+#close-button {
+  display: none;
+  position: absolute;
+  align-self: center;
+  bottom: 9rem;
+  right: 10rem;
+  background-color: red;
+  color: white;
+  border: none;
+  padding: 5px;
+  cursor: pointer;
+  z-index: 10;
+}
+#close-button {
+  display: none;
+  position: absolute;
+  align-self: center;
+  bottom: 9rem;
+  right: 10rem;
+  background: linear-gradient(135deg, #ff416c, #ff4b2b);
+  color: white;
+  border: none;
+  border-radius: 50px;
+  padding: 10px 20px;
+  font-family: "Poppins", sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  z-index: 10;
+  box-shadow: 0 5px 15px rgba(255, 79, 89, 0.6);
+  transition: all 0.3s ease-in-out;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+#close-button:hover {
+  background: linear-gradient(
+    135deg,
+    #ff4b2b,
+    #ff416c
+  ); /* Reverse gradient on hover */
+  box-shadow: 0 8px 20px rgba(255, 79, 89, 0.8); /* Intense glow */
+  transform: scale(1.1); /* Slight zoom effect */
+}
+
+#close-button:active {
+  transform: scale(0.95); /* Pressed button effect */
+  box-shadow: 0 3px 10px rgba(255, 79, 89, 0.5); /* Diminished glow */
+}
+
+#close-button.show {
+  display: block;
+}
+
+.transaction-card {
+  scrollbar-width: 0;
+  background: linear-gradient(135deg, #0091cc, #222);
+  border-radius: 16px;
+  padding: 30px;
+  margin: 20px;
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  max-width: 350px;
+  width: 100%;
+  backdrop-filter: blur(10px);
+}
+
+.transaction-card:hover {
+  transform: translateY(-10px); /* Subtle lift on hover */
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.7); /* Stronger shadow on hover */
+}
+
+.transaction-card strong {
+  font-weight: 600;
+  color: #00d2d2; /* Neon cyan for key details */
+}
+
+/* Transaction details */
+.transaction-id,
+.transaction-sender,
+.transaction-recipient,
+.transaction-amount,
+.transaction-signed-by,
+.transaction-hash,
+.transaction-time {
+  display: block;
+  margin-bottom: 15px;
+  font-size: 18px;
+  transition: color 0.3s ease;
+}
+
+.transaction-id,
+.transaction-sender,
+.transaction-recipient,
+.transaction-signed-by,
+.transaction-hash {
+  color: rgba(255, 255, 255, 0.85); /* Soft white text */
+}
+
+.transaction-amount {
+  font-size: 20px;
+  color: #1dbf73; /* Vibrant green for the transaction amount */
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  transition: color 0.3s ease;
+}
+
+.crypto-icon {
+  width: 22px;
+  height: 22px;
+  margin-left: 10px;
+  filter: brightness(0) invert(1); /* White crypto icon */
+}
+
+.transaction-time {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.6); /* Lighter color for time */
+}
+
+/* Hover effect for text */
+.transaction-id:hover,
+.transaction-sender:hover,
+.transaction-recipient:hover,
+.transaction-amount:hover,
+.transaction-signed-by:hover,
+.transaction-hash:hover,
+.transaction-time:hover {
+  color: #ffb6c1; /* Subtle pinkish glow on hover */
+}
+
+/* Fancy glowing effect for important details */
+.transaction-id,
+.transaction-amount,
+.transaction-signed-by {
+  text-shadow: 0 0 10px rgba(0, 210, 210, 0.6); /* Glowing effect */
+}
+
+/* Mobile responsiveness */
+@media (max-width: 600px) {
+  .transaction-card {
+    padding: 20px;
+  }
+
+  .transaction-id,
+  .transaction-sender,
+  .transaction-recipient,
+  .transaction-amount,
+  .transaction-signed-by,
+  .transaction-hash,
+  .transaction-time {
+    font-size: 16px;
+  }
+
+  .transaction-amount {
+    font-size: 18px;
   }
 }

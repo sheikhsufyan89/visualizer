@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -134,6 +134,39 @@
 
       // Render blocks
       renderBlockchain(blocks);
+    </script>
+  </body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dynamic Hash Function</title>
+  </head>
+  <body>
+    <div>
+      <h2>Dynamic Hash Function Execution</h2>
+      <p>Check the console for results.</p>
+    </div>
+
+    <script>
+      function customHash(transactionData, transactionTime) {
+        let combined = transactionData + transactionTime.toString();
+        let hash = 0;
+        for (let i = 0; i < combined.length; i++) {
+          hash = hash * 31 + combined.charCodeAt(i);
+        }
+        hash ^= hash >>> 16;
+        return hash;
+      }
+
+      const transactionData = "AliceBob100.5";
+      const transactionTime = Date.now();
+
+      const result = customHash(transactionData, transactionTime);
+      console.log("Hash result:", result);
     </script>
   </body>
 </html>
