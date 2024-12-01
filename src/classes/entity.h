@@ -11,6 +11,9 @@ private:
 
 public:
     // Entity(const string& id) : id(id) {}
+
+    Entity() : id("") {}
+
     Entity(const string& idd){
         id = idd;
     }

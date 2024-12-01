@@ -9,6 +9,11 @@ int SignedTransaction::counter = 0 ;
 SignedTransaction::SignedTransaction(const string &id, const string &sender, const string &receiver, double amount, unsigned int hash, string signed_by, time_t timestamp)
     : Entity(id), sender(sender), receiver(receiver), amount(amount), signedBy(signed_by), hashValue(hash), timestamp(timestamp) {}
 
+
+SignedTransaction::SignedTransaction(const std::string& id, const std::string& sender, const std::string& receiver, double amount, int timestamp) 
+        : Entity(id), sender(sender), receiver(receiver), amount(amount), timestamp(timestamp) {}
+
+
     
 string SignedTransaction::genTransactionID(){
     return "STX" + to_string(++counter);
@@ -26,17 +31,17 @@ string SignedTransaction::getSignedBy(){
     return signedBy;
 }
 
-string SignedTransaction::getHashVal(){
-    return to_string(hashValue);
+unsigned int SignedTransaction::getHashVal() const {
+    return (hashValue);
 }
 
-string SignedTransaction::getSender(){
+string SignedTransaction::getSender() const {
     return sender;
 }
-string SignedTransaction::getReceiver(){
+string SignedTransaction::getReceiver() const {
     return receiver;
 }
-int SignedTransaction::getAmount(){
+int SignedTransaction::getAmount() const {
     return amount;
 }
 

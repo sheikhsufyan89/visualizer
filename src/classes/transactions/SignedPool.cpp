@@ -5,6 +5,12 @@ using namespace std;
 
 SignedPool* SignedPool::instance = nullptr;
 
+// SignedPool::SignedPool() : signed_count(0) {
+//     for (int i = 0; i < 100; ++i) {
+//         already_signed[i] = nullptr;
+//     }
+// }
+
 bool SignedPool::addSTransaction(SignedTransaction* stx) {
     if (signed_count < 100) {
         already_signed[signed_count++] = stx;
@@ -29,7 +35,7 @@ bool SignedPool::deleteSTransaction(const string& transaction_id) {
 void SignedPool::processTransaction(const string& transaction_id) {
     for (int i = 0; i < signed_count; ++i) {
         if (already_signed[i]->getId() == transaction_id) {
-            std::cout << "Processing signed transaction: " << transaction_id << std::endl;
+            // std::cout << "Processing signed transaction: " << transaction_id << std::endl;
             deleteSTransaction(transaction_id);
             break;
         }
@@ -42,13 +48,12 @@ void SignedPool::display() const {
     for (int i = 0; i < signed_count; ++i) {
         already_signed[i]->display();
     }
+    cout << "----------------------------------------------------------------------------------------------" << endl;
 }
 
 int SignedPool::getPendingCount() {
     return signed_count;
 }
-
-
 
 
 

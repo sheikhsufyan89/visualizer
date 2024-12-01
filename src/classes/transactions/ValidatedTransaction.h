@@ -3,6 +3,7 @@
 
 #include <string>
 #include "../entity.h"
+#include "SignedTransaction.h"
 
 class ValidatedTransaction : public Entity {
 private:

@@ -17,12 +17,23 @@ class SignedPool : public Entity {
         SignedPool(const string& id) : Entity(id), signed_count(0) {}
     
     public:
+        SignedPool() = default;
+
         static SignedPool* getInstance(const string& id = "default_pool_id"){
             if(!instance){
                 instance = new SignedPool(id);
             }
             return instance;
         }
+
+        // Inside the SignedPool class, add a method to get a transaction by index
+        SignedTransaction* getTransaction(int index) {
+            if (index >= 0 && index < signed_count) {
+                return already_signed[index];
+            }
+            return nullptr;  // Return null if the index is out of bounds
+        }
+
 
         bool addSTransaction(SignedTransaction* stx);
         bool deleteSTransaction(const string& transaction_id);
@@ -38,6 +49,10 @@ class SignedPool : public Entity {
 
         
     void display() const override;
+
+    ~SignedPool() {
+        delete instance;
+    }
 };
 
 #endif
