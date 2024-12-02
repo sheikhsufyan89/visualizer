@@ -19,3 +19,4 @@ std::string ValidatedTransaction::getSender() const { return sender; }
 std::string ValidatedTransaction::getReceiver() const { return receiver; }
 double ValidatedTransaction::getAmount() const { return amount; }
 time_t ValidatedTransaction::getTimestamp() const { return timestamp; }
+

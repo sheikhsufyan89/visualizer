@@ -96,7 +96,6 @@ function getCustomHashFunction() {
 
 let textEditor = document.getElementById("text-editor");
 let closeButton = document.getElementById("close-button");
-// let hashButton = document.getElementById("hash-button");
 
 hashButton.addEventListener("click", () => {
   if (selectedTransaction) {
@@ -110,18 +109,13 @@ hashButton.addEventListener("click", () => {
           closeButton.classList.remove("show");
           customHashFunction = getCustomHashFunction();
           alert("Dispatching with custom hash function: " + customHashFunction);
-
-          // Send the POST request after retrieving the custom hash function
           await sendHashRequest(customHashFunction);
         },
         { once: true }
       );
     } else {
-      // Standard user case
-      const standardHashFunction = ""; // Default empty hash function
+      const standardHashFunction = "";
       alert("You are a standard user. Dispatching with default hash function.");
-
-      // Send the POST request immediately
       sendHashRequest(standardHashFunction);
     }
   } else {
@@ -129,7 +123,6 @@ hashButton.addEventListener("click", () => {
   }
 });
 
-// Function to handle the POST request
 async function sendHashRequest(hashfunction) {
   try {
     const response = await fetch("http://localhost:8080/hash", {
@@ -173,7 +166,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         for (let key in transactions) {
           const transaction = transactions[key];
           const listItem = document.createElement("li");
-          // listItem.classList.add("transaction", "signed");
           listItem.innerHTML = `
         <div class="transaction-card">
   <span class="transaction-id"><strong>ID:</strong> ${transaction.id}</span>

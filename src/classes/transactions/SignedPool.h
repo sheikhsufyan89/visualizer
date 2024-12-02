@@ -26,12 +26,11 @@ class SignedPool : public Entity {
             return instance;
         }
 
-        // Inside the SignedPool class, add a method to get a transaction by index
         SignedTransaction* getTransaction(int index) {
             if (index >= 0 && index < signed_count) {
                 return already_signed[index];
             }
-            return nullptr;  // Return null if the index is out of bounds
+            return nullptr;  
         }
 
 
@@ -45,7 +44,7 @@ class SignedPool : public Entity {
             }
             return nullptr;
         }
-
+        void clearPool();
 
         
     void display() const override;

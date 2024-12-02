@@ -4,7 +4,7 @@
 #include <vector>
 #include <string>
 #include "../blocks/Block.h"
-#include "../miners/Miner.h"
+#include "../miners/miner.h"
 
 class BlockChain{
     private:
@@ -14,11 +14,22 @@ class BlockChain{
     
     public:
         BlockChain(int difficulty);
-        void addBlock(const std::vector<std::string>& transactionData);
-        void mineBlock(Block &block);
+        // void addBlock(const std::vector<std::string>& transactionData);
+        // void mineBlock(Block &block);
+        string addBlock(const std::vector<std::string>& transactionData);
+        string mineBlock(Block &block);
         Block getLastBlock() const;
         bool isValidChain() const;	
         void displayChain() const;
+        const std::vector<Block>& getChain() const {
+            return chain;
+        }
+        int getDifficulty() const {
+            return difficulty;
+        }
+        const Miner& getMiner() const {
+            return miner;
+        }
 };
 
 #endif

@@ -3,9 +3,46 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Miner</title>
+    <title>Transaction</title>
+    <link rel="stylesheet" href="static/css/transaction.css" />
+    <link rel="stylesheet" href="static/css/miner.css" />
   </head>
   <body>
-    <h1>Hello miner</h1>
+    <div class="container">
+      <div class="dashboard">
+        <div class="greeting-container">
+          <span class="greeting-text">Hello!</span>
+          <span id="username-display" class="username">User</span>
+        </div>
+
+        <div class="navbar">
+          <a href="#" id="nav-signed-transactions" class="active">Signed</a>
+          <a href="#" id="nav-validated-transactions">Validated</a>
+        </div>
+        <button id="validate">Validate Transactions</button>
+        <div class="content">
+          <div id="signed-transactions-section" class="active">
+            <h2>Signed Transactions</h2>
+            <ul id="signed-transactions-list"></ul>
+          </div>
+          <div id="validated-transactions-section">
+            <h2>Validated Transactions</h2>
+            <button id="block">Create a block</button>
+            <ul id="validated-transactions-list"></ul>
+          </div>
+        </div>
+      </div>
+      <div id="terminal"></div>
+      <div class="visualizer">
+        <h1>Blockchain Visualizer</h1>
+        <div class="blockchain" id="blockchain-container"></div>
+      </div>
+    </div>
+
+    <!-- <script src="static/js/nav.js"></script> -->
+    <script src="static/js/transaction.js"></script>
+    <script src="static/js/blockchain.js"></script>
+    <script src="static/js/transactionMain.js"></script>
+    <script src="static/js/miner.js"></script>
   </body>
 </html>

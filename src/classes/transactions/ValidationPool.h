@@ -72,8 +72,6 @@ public:
     //further functions added by khadeer to comply the class
     bool addValidatedTransaction(SignedTransaction* vtx);
 
-    // static ValidationPool* getInstance(const string& id);
-
     ValidatedTransaction* getValidatedTransactions() const {
         return *validated_transactions;
     }
@@ -81,7 +79,7 @@ public:
     void clear();
 
     ~ValidationPool();
-
+    void clearPool();
 };
 
 

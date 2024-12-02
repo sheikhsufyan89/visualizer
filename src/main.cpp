@@ -9,6 +9,8 @@
 #include "classes/transactions/PendingTransactionPool.h"
 #include "classes/transactions/SignedPool.h"
 #include "classes/transactions/SignedTransaction.h"
+#include "classes/miners/miner.h"
+#include "classes/Chain/BlockChain.h"
 void serveFile(crow::response& res, const std::string& filePath, const std::string& contentType) {
     std::ifstream file(filePath);
     if (!file) {
@@ -152,6 +154,9 @@ unsigned int executeHashFunction(const string& hashFunction, const string& trans
 
 PendingTransactionPool* txPool = PendingTransactionPool::getInstance();
 SignedPool* sxPool = SignedPool::getInstance();
+ValidationPool* validationPool = ValidationPool::getInstance("MyValidationPool");
+
+BlockChain Blockchain(1);
 
 CurrentUser currentUser;
 
@@ -165,11 +170,17 @@ CustomUser customUsers[MAX_USERS] = {
     CustomUser("custom1", "password1"),
     CustomUser("custom1", "password2")
 };
-// User customUsers[MAX_USERS]; 
-// User minerUsers[MAX_USERS];  
+
+Miner miners[MAX_USERS]= {
+    Miner("miner1", "password1", 1),
+    Miner("miner2", "password2", 2)
+};
+
+
+
 int standardUserCount = 2;
 int customUserCount = 2;
-// int minerUserCount = 0;
+int minerUserCount = 2;
 
 
 
@@ -314,6 +325,17 @@ CROW_ROUTE(app, "/assets/<string>")
                 }
             }
         } else if (role == "miner") {
+            for (int i = 0; i < minerUserCount; ++i) {
+                if (miners[i].getUsername() == username && miners[i].getPassword() == password) {
+                    crow::json::wvalue response_data;
+                    response_data["username"] = username;
+                    response_data["password"] = password;
+                    response_data["role"] = role;
+                    response_data["redirect_url"] = "miner";
+                    currentUser.login(username, password, role);
+                    return crow::response(200, response_data);
+                }
+            }
         }
 
         return crow::response(401, "Invalid credentials");
@@ -359,7 +381,7 @@ CROW_ROUTE(app, "/hash").methods("POST"_method)([](const crow::request& req) {
     double amount = body["amount"].d();
     string hashFunction = body["hashfunction"].s();
 
-    string transactionData = sender + receiver + to_string(amount);
+    string transactionData = signed_by + receiver + to_string(amount);
     time_t timestamp = txPool->getTransactionTimestamp(id);
 
     unsigned int hash;
@@ -373,7 +395,6 @@ CROW_ROUTE(app, "/hash").methods("POST"_method)([](const crow::request& req) {
     } else {
         hash = currentUser.calculateHash(transactionData, timestamp);
     }
-
     SignedTransaction* sx = new SignedTransaction(id, sender, receiver, amount, hash, signed_by, timestamp);
     sxPool->addSTransaction(sx);
 
@@ -429,13 +450,106 @@ CROW_ROUTE(app, "/hash").methods("POST"_method)([](const crow::request& req) {
                 response[index++] = std::move(transactionJson);
             }
         }
+        
 
         return crow::response(200, response);
     });
+
+
+
+  CROW_ROUTE(app, "/validate").methods("POST"_method)([]() {
+    crow::json::wvalue response;
+    string result = currentUser.ValidateAndAddTransactions(sxPool);
+    sxPool->clearPool();
+    response["result"] = result;  
+    response["status"] = "success";  
+    return crow::response{response};  
+});
+
+    CROW_ROUTE(app, "/validatedTransactions")([] {
+    ValidationPool* pool = ValidationPool::getInstance("MyValidationPool");
+    crow::json::wvalue response;
+    int index = 0;
+
+    for (int i = 0; i < pool->getValidatedCount(); ++i) {
+        ValidatedTransaction* tx = pool->getTransaction(i); 
+        if (tx) {
+            crow::json::wvalue transactionJson;
+            transactionJson["id"] = tx->getId();
+            transactionJson["sender"] = tx->getSender();
+            transactionJson["receiver"] = tx->getReceiver();
+            transactionJson["amount"] = tx->getAmount();
+            response[index++] = std::move(transactionJson);
+        }
+    }
+    return crow::response(200, response);  
+    });
+
+CROW_ROUTE(app, "/addBlock").methods("POST"_method)([]() {
+    crow::json::wvalue response;
+
+    vector<string> txData1;
+    for (int i = 0; i < validationPool->getValidatedCount(); ++i) {
+        ValidatedTransaction* tx = validationPool->getTransaction(i);
+        if (tx != nullptr) {
+            txData1.push_back(tx->getId() + ": " + tx->getSender() + " -> " + tx->getReceiver() + ": " + to_string(tx->getAmount()));
+        }
+    }
+    string result = Blockchain.addBlock(txData1);
+    validationPool->clearPool();
+    response["result"] = result;  
+    response["status"] = "success";  
+    return crow::response{response};  
+});
+
+
+// CROW_ROUTE(app, "/blockchain")([] {
+//     crow::json::wvalue response; 
+    
+    
+
+//     // Iterate over the blockchain and collect block data
+//     for (const Block& block : Blockchain.getChain()) {
+//         crow::json::wvalue blockData;
+
+//         blockData["index"] = block.getIndex();
+//         blockData["data"] = block.getData();
+//         blockData["previousHash"] = block.getPreviousHash();
+//         blockData["hash"] = block.getHash();
+//         blockData["nonce"] = block.getNonce();
+
+//         // Push block data into the blocks array
+//         blocks.push_back(blockData);
+//     }
+
+//     // Add the blocks data to the response
+//     response["blocks"] = blocks;
+
+//     return crow::response{response};
+// });
+
+CROW_ROUTE(app, "/blockchain")([] {
+    crow::json::wvalue response;
+    int index = 0; 
+    for (const Block& block : Blockchain.getChain()) {
+        crow::json::wvalue blockData;
+        blockData["index"] = block.getIndex();
+        blockData["data"] = block.getData();
+        blockData["previousHash"] = block.getPreviousHash();
+        blockData["hash"] = block.getHash();
+        blockData["nonce"] = block.getNonce();
+        response[index++] = std::move(blockData);
+    }
+    return crow::response{response};
+});
+
+
 
     
 
     app.port(8080).multithreaded().run();
     return 0;
 }
+
+
 

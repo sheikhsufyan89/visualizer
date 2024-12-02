@@ -29,10 +29,13 @@ class SignedTransaction : public Entity {
         string getSender() const ;
         string getReceiver() const ;
         time_t getTimeStamp() const;
-        int getAmount() const ;
+        double getAmount() const ;
         
-  
-        // ~SignedTransaction();
+        
+        unsigned int getHash() const {
+            return static_cast<unsigned int>(hashValue);
+        }
+        ~SignedTransaction();
 };
 
 #endif

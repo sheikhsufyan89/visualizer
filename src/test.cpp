@@ -781,7 +781,7 @@ int main() {
     SignedPool* pool = SignedPool::getInstance("MySignedPool");
 
     vector<SignedTransaction*> transactions = {
-        new SignedTransaction("STX1", "Bob", "Charlie", 50.0, 67890, "Miner2", 1700000000),   // 1700000000 value is the time stamp in unicode
+        new SignedTransaction("STX1", "Bob", "Charlie", 50.0, 67890, "Miner2", 1700000000),  
         new SignedTransaction("STX9", "Dave", "Eve", 100.0, 2925523637, "Miner9", 1700000003),
         new SignedTransaction("STX12", "Frank", "Grace", 75.0, 667788990, "Miner12", 1700000006),
         new SignedTransaction("STX7", "Bob", "Charlie", 75.0, 1767195885, "Miner7", 1700000001),
@@ -789,21 +789,17 @@ int main() {
     };
 
     for (auto& tx : transactions) {
-        pool->addSTransaction(tx);  // Adding transactions to the pool
+        pool->addSTransaction(tx);  
     }
 
-    cout << "Transactions added to the pool" << endl;
+    SignedTransaction* tx1 = new SignedTransaction("TX1", "user1", "user2", 100.0, 3447287998, "user1", 1733147912);
+    pool->addSTransaction(tx1);
 
-    Miner miner(0);  // Difficulty of 1 for mining
-
+    Miner miner("miner", "password", 1);  
     ValidationPool* validationPool = ValidationPool::getInstance("MyValidationPool");
-
-    miner.ValidateAndAddTransactions(*pool);
-
-    cout << "Transactions validated and added by miner" << endl;
-    cout << endl;
-
-    BlockChain blockchain(2);  // Difficulty level for the blockchain mining. For some reason, difficulty of blockchain is effecting the minig process and the difficulty of mining constructor is not.
+    string result = miner.ValidateAndAddTransactions(pool);
+    cout << result;
+    BlockChain blockchain(2);
 
     vector<string> txData1;
     for (int i = 0; i < validationPool->getValidatedCount(); ++i) {
@@ -816,15 +812,70 @@ int main() {
 
     cout << "Blocks added to the blockchain" << endl;
 
+    // Display the blockchain
     blockchain.displayChain();
-
     cout << "Blockchain displayed" << endl;
 
+    // Clean up dynamically allocated transactions
     for (auto& tx : transactions) {
         delete tx;
     }
+    delete tx1;  // Clean up the extra SignedTransaction `tx1`
 
     cout << "Program ended" << endl;
 
     return 0;
 }
+
+
+// #include <openssl/evp.h>
+// #include <openssl/sha.h>
+// #include <iostream>
+// #include <iomanip>
+
+// int main() {
+//     // Sample data to hash
+//     std::string data = "Hello, OpenSSL 3.0!";
+
+//     // Create an EVP context for SHA256
+//     EVP_MD_CTX* mdctx = EVP_MD_CTX_new();
+//     if (mdctx == nullptr) {
+//         std::cerr << "Error creating EVP_MD_CTX\n";
+//         return 1;
+//     }
+
+//     // Initialize the context with SHA256
+//     if (EVP_DigestInit_ex(mdctx, EVP_sha256(), nullptr) != 1) {
+//         std::cerr << "Error initializing digest\n";
+//         EVP_MD_CTX_free(mdctx);
+//         return 1;
+//     }
+
+//     // Update the context with data to hash
+//     if (EVP_DigestUpdate(mdctx, data.c_str(), data.length()) != 1) {
+//         std::cerr << "Error updating digest\n";
+//         EVP_MD_CTX_free(mdctx);
+//         return 1;
+//     }
+
+//     // Finalize the hash
+//     unsigned char hash[EVP_MAX_MD_SIZE];
+//     unsigned int hash_len = 0;
+//     if (EVP_DigestFinal_ex(mdctx, hash, &hash_len) != 1) {
+//         std::cerr << "Error finalizing digest\n";
+//         EVP_MD_CTX_free(mdctx);
+//         return 1;
+//     }
+
+//     // Clean up
+//     EVP_MD_CTX_free(mdctx);
+
+//     // Print the hash as a hex string
+//     std::cout << "SHA256 hash: ";
+//     for (unsigned int i = 0; i < hash_len; i++) {
+//         std::cout << std::hex << std::setw(2) << std::setfill('0') << (int)hash[i];
+//     }
+//     std::cout << std::endl;
+
+//     return 0;
+// }

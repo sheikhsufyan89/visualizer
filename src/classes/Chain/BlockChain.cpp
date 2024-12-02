@@ -14,16 +14,28 @@ BlockChain::BlockChain(int diff) : miner(diff), difficulty(diff) {
 }
 
 // Method to add a new block to the blockchain
-void BlockChain::addBlock(const vector<string>& transactionData) {
+// void BlockChain::addBlock(const vector<string>& transactionData) {
+//     string previousHash = getLastBlock().getHash();  // Get the hash of the last block
+//     Block newBlock(chain.size(), transactionData, previousHash);  // Create a new block
+//     mineBlock(newBlock);  // Mine the block
+//     chain.push_back(newBlock);  // Add the mined block to the chain
+// }
+string BlockChain::addBlock(const vector<string>& transactionData) {
     string previousHash = getLastBlock().getHash();  // Get the hash of the last block
     Block newBlock(chain.size(), transactionData, previousHash);  // Create a new block
-    mineBlock(newBlock);  // Mine the block
+    string result = mineBlock(newBlock);  // Mine the block
     chain.push_back(newBlock);  // Add the mined block to the chain
+    return result;
 }
 
+
 // Method to mine a block
-void BlockChain::mineBlock(Block &block) {
-    miner.mineBlock(block);  // Use the miner to mine the block
+// void BlockChain::mineBlock(Block &block) {
+//     miner.mineBlock(block);  // Use the miner to mine the block
+// }
+string BlockChain::mineBlock(Block &block) {
+    string result = miner.mineBlock(block);  // Use the miner to mine the block
+    return result;
 }
 
 // Method to get the last block in the chain

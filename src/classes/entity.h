@@ -10,7 +10,6 @@ private:
     string id;
 
 public:
-    // Entity(const string& id) : id(id) {}
 
     Entity() : id("") {}
 
@@ -26,4 +25,4 @@ public:
     virtual void display() const = 0;
 };
 
-#endif // ENTITY_H
+#endif 

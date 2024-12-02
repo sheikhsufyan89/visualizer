@@ -41,10 +41,11 @@ string SignedTransaction::getSender() const {
 string SignedTransaction::getReceiver() const {
     return receiver;
 }
-int SignedTransaction::getAmount() const {
+double SignedTransaction::getAmount() const {
     return amount;
 }
 
 time_t SignedTransaction::getTimeStamp() const {
     return timestamp;
 }
+

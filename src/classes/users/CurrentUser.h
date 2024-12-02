@@ -4,6 +4,7 @@
 #include <functional>
 #include "StandardUser.h"
 #include "CustomUser.h"
+#include "../miners/miner.h"
 
 using namespace std;
 
@@ -53,6 +54,13 @@ public:
         return 0; 
     }
 
+    string ValidateAndAddTransactions(SignedPool* pool) {
+        if (role == "miner"){
+            return currentMiner.ValidateAndAddTransactions(pool);
+        }
+        return "Error: Only miners can validate and add transactions.";
+    }
+
     
 
 private:
@@ -63,6 +71,7 @@ private:
     
     StandardUser currentStandardUser;
     CustomUser currentCustomUser;
+    Miner currentMiner;
 };
 
 #endif

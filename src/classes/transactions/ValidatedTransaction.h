@@ -23,6 +23,7 @@ public:
     std::string getReceiver() const;
     double getAmount() const;
     time_t getTimestamp() const;
+    
 };
 
 #endif

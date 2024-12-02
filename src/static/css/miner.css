@@ -1,0 +1,237 @@
+#validate {
+  margin-top: 10px;
+  padding: 15px 30px;
+  font-size: 18px;
+  font-weight: bold;
+  color: #fff;
+  background-color: #0091cc;
+  border: 2px solid #0091cc;
+  border-radius: 8px;
+  text-transform: uppercase;
+  cursor: pointer;
+  position: relative;
+  transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
+  box-shadow: 0 0 15px rgba(0, 181, 255, 0.4);
+  overflow: hidden;
+}
+
+#validate:hover {
+  background-color: #66ccff;
+  box-shadow: 0 0 25px #66ccff, 0 0 15px #66ccff inset;
+  transform: scale(1.1);
+}
+
+#validate:active {
+  background-color: #0088b0;
+  box-shadow: 0 0 10px #0088b0, 0 0 5px #0088b0 inset;
+}
+
+#validate::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 300%;
+  height: 300%;
+  background-color: #66ccff;
+  transition: all 0.4s ease;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 0;
+  opacity: 0;
+}
+
+#validate:hover::before {
+  width: 0;
+  height: 0;
+  opacity: 1;
+}
+
+#validate span {
+  position: relative;
+  z-index: 1;
+}
+
+.bubble-notification {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 10px 20px;
+  background-color: #4caf50;
+  color: white;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  font-size: 16px;
+  z-index: 1000;
+  opacity: 0;
+  animation: fadeInOut 3s forwards;
+}
+
+.bubble-notification.error {
+  background-color: #f44336;
+}
+
+@keyframes fadeInOut {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  10%,
+  90% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}
+
+#validated-transactions-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.validatedTransaction {
+  background: linear-gradient(45deg, #00b4d8, #48c9b0);
+  color: #fff;
+  border-radius: 15px;
+  padding: 15px;
+  margin: 10px 0;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.validatedTransaction:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.validatedTransaction.approved {
+  background: linear-gradient(45deg, #4caf50, #81c784);
+  border-left: 5px solid #388e3c;
+}
+
+.vtx-id {
+  font-weight: bold;
+  font-size: 18px;
+  color: #f1f1f1;
+  margin-bottom: 5px;
+}
+
+.vtx-sender,
+.vtx-recipient {
+  font-size: 16px;
+  margin-bottom: 8px;
+  color: #e0e0e0;
+  font-family: "Roboto", sans-serif;
+}
+
+.vtx-amount {
+  font-size: 18px;
+  font-weight: bold;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.solana-icon {
+  width: 20px;
+  height: 20px;
+  margin-right: 10px;
+  filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.6));
+}
+
+.vtx-sender,
+.vtx-recipient {
+  position: relative;
+  animation: slideIn 0.5s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.validatedTransaction .approved {
+  border-left: 5px solid #81c784;
+  background: linear-gradient(45deg, #4caf50, #81c784);
+}
+
+@keyframes bounceIn {
+  0% {
+    transform: scale(0);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.validatedTransaction {
+  animation: bounceIn 0.5s ease-out;
+}
+
+#terminal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 70%;
+  height: 50%;
+  background-color: rgba(30, 30, 30, 0.95);
+  border: 2px solid rgba(0, 255, 170, 0.8);
+  padding: 20px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  box-shadow: 0 0 20px rgba(0, 255, 170, 0.5), 0 0 60px rgba(0, 255, 170, 0.2);
+  display: none;
+  border-radius: 10px;
+  font-family: "Courier New", Courier, monospace;
+  color: #0affb3;
+  scrollbar-width: none;
+}
+
+#terminal::-webkit-scrollbar {
+  display: none;
+}
+
+#terminal p {
+  margin: 0;
+}
+
+@keyframes glow {
+  0% {
+    box-shadow: 0 0 10px rgba(0, 255, 170, 0.5), 0 0 40px rgba(0, 255, 170, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(0, 255, 170, 0.8), 0 0 60px rgba(0, 255, 170, 0.4);
+  }
+  100% {
+    box-shadow: 0 0 10px rgba(0, 255, 170, 0.5), 0 0 40px rgba(0, 255, 170, 0.2);
+  }
+}
+
+#terminal {
+  animation: glow 2s infinite alternate;
+}
+
+.addButton {
+  margin-top: 10px;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+}

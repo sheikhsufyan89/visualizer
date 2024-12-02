@@ -8,6 +8,7 @@ using namespace std;
 
 class User {
 public:
+    User(){}
 
     User(const string& username, const string& password, const string& role)
         : username(username), password(password), role(role) {}

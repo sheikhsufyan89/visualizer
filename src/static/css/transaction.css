@@ -25,7 +25,10 @@ body {
   padding: 20px;
   box-sizing: border-box;
   box-shadow: 0 0 20px rgba(0, 181, 255, 0.4);
-  overflow-y: auto;
+  overflow-y: scroll;
+  list-style: none;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
 .content > div {
@@ -206,13 +209,12 @@ body {
   margin-right: 8px;
 }
 
-/* Global styles */
 body,
 html {
   margin: 0;
   padding: 0;
   font-family: "Poppins", sans-serif;
-  background-color: #121212; /* Dark background */
+  background-color: #121212;
   color: #fff;
   display: flex;
   justify-content: center;
@@ -220,22 +222,17 @@ html {
   height: 100vh;
 }
 
-/* Container for the transaction */
 .transaction {
   scrollbar-width: 0;
-  background: linear-gradient(
-    135deg,
-    #1c1c3c,
-    #3545b0
-  ); /* Deep blue gradient */
+  background: linear-gradient(135deg, #1c1c3c, #3545b0);
   border-radius: 16px;
   padding: 15px;
   margin-bottom: 10px;
   margin-left: 5px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); /* Depth effect */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
   display: flex;
-  justify-content: space-between; /* Space out the transaction details */
-  align-items: center; /* Center the content vertically */
+  justify-content: space-between;
+  align-items: center;
   max-width: 580px;
   width: 92%;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -245,26 +242,24 @@ html {
 }
 
 .transaction:hover {
-  transform: translateY(-5px); /* Subtle lift effect */
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7); /* Stronger shadow on hover */
+  transform: translateY(-5px);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
 }
 
-/* Transaction details */
 .tx-id,
 .tx-sender,
 .tx-recipient,
 .tx-amount {
   font-size: 16px;
-  color: rgba(255, 255, 255, 0.85); /* Soft white text */
-  margin-right: 10px; /* Space between the elements */
+  color: rgba(255, 255, 255, 0.85);
+  margin-right: 10px;
   display: inline-flex;
   align-items: center;
 }
 
-/* Amount section */
 .tx-amount {
   font-size: 18px;
-  color: #00bcd4; /* Cyan color for the amount */
+  color: #00bcd4;
   font-weight: bold;
   display: inline-flex;
   align-items: center;
@@ -274,27 +269,24 @@ html {
   width: 22px;
   height: 22px;
   margin-left: 10px;
-  filter: brightness(0) invert(1); /* Inverted color for the icon */
+  filter: brightness(0) invert(1);
 }
 
-/* Hover effect for each element */
 .tx-id:hover,
 .tx-sender:hover,
 .tx-recipient:hover,
 .tx-amount:hover {
-  color: #ff4081; /* Pinkish highlight on hover */
+  color: #ff4081;
 }
 
-/* Glowing effect for important elements */
 .tx-id,
 .tx-amount {
-  text-shadow: 0 0 8px rgba(0, 188, 212, 0.6); /* Cyan glow effect */
+  text-shadow: 0 0 8px rgba(0, 188, 212, 0.6);
 }
 
-/* Mobile responsiveness */
 @media (max-width: 600px) {
   .transaction {
-    flex-direction: column; /* Stack elements vertically on small screens */
+    flex-direction: column;
     padding: 15px;
   }
 
@@ -303,8 +295,8 @@ html {
   .tx-recipient,
   .tx-amount {
     font-size: 14px;
-    margin-right: 0; /* Remove margin for stacked layout */
-    margin-bottom: 10px; /* Add space between stacked elements */
+    margin-right: 0;
+    margin-bottom: 10px;
   }
 
   .tx-amount {
@@ -326,7 +318,7 @@ html {
   padding: 0;
   margin: 0;
 }
-/* Style for selected transaction */
+
 .selected {
   background-color: #1e2a47;
   color: #fff;
@@ -359,7 +351,6 @@ html {
   font-size: 1.2em;
   margin: 20px;
   margin-bottom: 3rem;
-  /* max-width: 300px; */
   margin: 0 auto;
 }
 
@@ -409,7 +400,7 @@ html {
 }
 
 #text-editor {
-  display: none; /* Initially hidden */
+  display: none;
   position: absolute;
   top: 50%;
   left: 50%;
@@ -488,18 +479,14 @@ html {
 }
 
 #close-button:hover {
-  background: linear-gradient(
-    135deg,
-    #ff4b2b,
-    #ff416c
-  ); /* Reverse gradient on hover */
-  box-shadow: 0 8px 20px rgba(255, 79, 89, 0.8); /* Intense glow */
-  transform: scale(1.1); /* Slight zoom effect */
+  background: linear-gradient(135deg, #ff4b2b, #ff416c);
+  box-shadow: 0 8px 20px rgba(255, 79, 89, 0.8);
+  transform: scale(1.1);
 }
 
 #close-button:active {
-  transform: scale(0.95); /* Pressed button effect */
-  box-shadow: 0 3px 10px rgba(255, 79, 89, 0.5); /* Diminished glow */
+  transform: scale(0.95);
+  box-shadow: 0 3px 10px rgba(255, 79, 89, 0.5);
 }
 
 #close-button.show {
@@ -521,16 +508,15 @@ html {
 }
 
 .transaction-card:hover {
-  transform: translateY(-10px); /* Subtle lift on hover */
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.7); /* Stronger shadow on hover */
+  transform: translateY(-10px);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.7);
 }
 
 .transaction-card strong {
   font-weight: 600;
-  color: #00d2d2; /* Neon cyan for key details */
+  color: #00d2d2;
 }
 
-/* Transaction details */
 .transaction-id,
 .transaction-sender,
 .transaction-recipient,
@@ -549,12 +535,12 @@ html {
 .transaction-recipient,
 .transaction-signed-by,
 .transaction-hash {
-  color: rgba(255, 255, 255, 0.85); /* Soft white text */
+  color: rgba(255, 255, 255, 0.85);
 }
 
 .transaction-amount {
   font-size: 20px;
-  color: #1dbf73; /* Vibrant green for the transaction amount */
+  color: #1dbf73;
   font-weight: bold;
   display: flex;
   align-items: center;
@@ -565,15 +551,14 @@ html {
   width: 22px;
   height: 22px;
   margin-left: 10px;
-  filter: brightness(0) invert(1); /* White crypto icon */
+  filter: brightness(0) invert(1);
 }
 
 .transaction-time {
   font-size: 14px;
-  color: rgba(255, 255, 255, 0.6); /* Lighter color for time */
+  color: rgba(255, 255, 255, 0.6);
 }
 
-/* Hover effect for text */
 .transaction-id:hover,
 .transaction-sender:hover,
 .transaction-recipient:hover,
@@ -581,17 +566,15 @@ html {
 .transaction-signed-by:hover,
 .transaction-hash:hover,
 .transaction-time:hover {
-  color: #ffb6c1; /* Subtle pinkish glow on hover */
+  color: #ffb6c1;
 }
 
-/* Fancy glowing effect for important details */
 .transaction-id,
 .transaction-amount,
 .transaction-signed-by {
-  text-shadow: 0 0 10px rgba(0, 210, 210, 0.6); /* Glowing effect */
+  text-shadow: 0 0 10px rgba(0, 210, 210, 0.6);
 }
 
-/* Mobile responsiveness */
 @media (max-width: 600px) {
   .transaction-card {
     padding: 20px;
