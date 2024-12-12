@@ -235,3 +235,52 @@
   font-size: 16px;
   cursor: pointer;
 }
+
+.logout-button {
+  background-color: #ff4c4c; /* Bright red background */
+  color: white; /* White text */
+  font-size: 16px; /* Slightly larger text for visibility */
+  font-weight: bold; /* Make the text bold */
+  border: none; /* Remove default border */
+  border-radius: 8px; /* Rounded corners */
+  padding: 10px 20px; /* Padding for a larger click area */
+  cursor: pointer; /* Show pointer cursor on hover */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  transition: background-color 0.3s, transform 0.2s; /* Smooth transitions */
+}
+
+.block-button {
+  background-color: #4caf50; /* Green background */
+  color: white; /* White text */
+  padding: 10px 20px; /* Padding for a comfortable size */
+  border: none; /* Remove border */
+  border-radius: 5px; /* Rounded corners */
+  font-size: 16px; /* Slightly larger text */
+  cursor: pointer; /* Pointer cursor on hover */
+  transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth transitions */
+}
+
+.block-button:hover {
+  background-color: #45a049; /* Darker green on hover */
+  transform: scale(1.05); /* Slight zoom effect */
+}
+
+.block-button:active {
+  background-color: #3e8e41; /* Even darker green when active */
+  transform: scale(0.98); /* Slight shrink effect */
+}
+
+.block-button:focus {
+  outline: 2px solid #4caf50; /* Green outline when focused */
+  outline-offset: 2px; /* Offset for focus outline */
+}
+
+.logout-button:hover {
+  background-color: #ff6666; /* Lighter red on hover */
+  transform: scale(1.05); /* Slight zoom effect */
+}
+
+.logout-button:active {
+  background-color: #ff3333; /* Darker red when clicked */
+  transform: scale(0.95); /* Slight shrink effect */
+}

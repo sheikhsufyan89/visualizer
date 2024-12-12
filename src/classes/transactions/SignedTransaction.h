@@ -35,7 +35,7 @@ class SignedTransaction : public Entity {
         unsigned int getHash() const {
             return static_cast<unsigned int>(hashValue);
         }
-        ~SignedTransaction();
+        // ~SignedTransaction();
 };
 
 #endif

@@ -594,3 +594,17 @@ html {
     font-size: 18px;
   }
 }
+
+#blockchain-container {
+  overflow: hidden; /* Prevents scrollbar visibility */
+  white-space: nowrap; /* Ensures content flows horizontally */
+}
+.row {
+  overflow-x: auto; /* Enables horizontal scrolling without scrollbar */
+  scrollbar-width: none; /* Hides scrollbar in Firefox */
+  -ms-overflow-style: none; /* Hides scrollbar in Internet Explorer */
+}
+
+.row::-webkit-scrollbar {
+  display: none; /* Hides scrollbar in Chrome, Edge, and Safari */
+}

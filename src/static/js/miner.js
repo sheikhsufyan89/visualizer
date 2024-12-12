@@ -183,31 +183,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   fetchSignedTransactions();
 });
 
-// document.addEventListener("DOMContentLoaded", () => {
-//   const blockButton = document.getElementById("block");
-
-//   blockButton.addEventListener("click", async () => {
-//     try {
-//       const response = await fetch("http://localhost:8080/addBlock", {
-//         method: "POST",
-//         headers: {
-//           "Content-Type": "application/json",
-//         },
-//       });
-
-//       if (response.ok) {
-//         const result = await response.json();
-//         const message = `Success: ${result.result}`;
-//       } else {
-//         const error = await response.json();
-//         showBubbleNotification(`Error: ${error.message}`, true);
-//       }
-//     } catch (error) {
-//       showBubbleNotification(`An error occurred: ${error.message}`, true);
-//     }
-//   });
-// });
-
 document.addEventListener("DOMContentLoaded", () => {
   const terminal = document.getElementById("terminal");
   const blockButton = document.getElementById("block");
@@ -220,10 +195,10 @@ document.addEventListener("DOMContentLoaded", () => {
   function hideTerminal() {
     setTimeout(() => {
       terminal.style.display = "none";
-    }, 5);
+    }, 1);
   }
 
-  function printLine(text, delay = 5) {
+  function printLine(text, delay = 1) {
     return new Promise((resolve) => {
       let index = 0;
       const interval = setInterval(() => {
